@@ -57,4 +57,5 @@ If you use this method in your research, please cite:
 		month={May},}
 
 
-
+## Note to self
+Use 'git push -u origin' to push changes I've made to this repository
