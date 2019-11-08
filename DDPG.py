@@ -247,7 +247,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
 
         summary_writer.flush()
 
-        if i > 0 and i % 1000 == 0 :
+        if i > 0 and i % 10 == 0 :
             saver.save(sess, 'saved_networks/' + GAME + '-dqn', global_step = i) 
 
         print '| Reward: %.2f' % ep_reward, " | Episode:", i, \
