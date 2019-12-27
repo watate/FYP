@@ -32,11 +32,11 @@ matplotlib
 
 cv2
 
-## Instruction
+## Instruction (Edited)
 
 roscore
 
-rosrun stage_ros stageros PATH TO THE FOLDER/AsDDPG/worlds/Obstacles.world
+rosrun stage_ros stageros worlds/Obstacles.world
 
 python DDPG.py
 

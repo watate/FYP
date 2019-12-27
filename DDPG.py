@@ -105,10 +105,10 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
     ou_level = 0.
     epsilon = INITIAL_EPSILON
 
-    rate = rospy.Rate(5)
-    loop_time = time.time()
+    rate = rospy.Rate(5) #forces code to loop exactly 5 times per second
+    loop_time = time.time() #returns time in seconds
     last_loop_time = loop_time
-    i = 0
+    i = 0 #initialize i to count episodes
 
     s1 = env.GetLaserObservation()
     s_1 = np.stack((s1, s1, s1), axis=1)
@@ -167,7 +167,16 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
 	            ep_PID_count += 1.
 	            print("-----------PID Controller---------------")
 
+            ## FOR TESTING ###########
+            print("Time is {}".format(time.time()))
+            print("Action is {}".format(a))
+            #########################
+
             # Set action for discrete and continuous action spaces
+            # To check action: print("Action is {}".format(a))
+            # action[0] is linear x
+            # action[1] is angular z
+            # everything else is 0
             action = a[0]
             if  action[0] <= 0.05:
                  action[0] = 0.05
