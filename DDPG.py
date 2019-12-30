@@ -4,6 +4,8 @@ import rospy
 import random
 import time
 import copy
+import pickle
+import os
 
 from StageWorld import StageWorld
 from ReplayBuffer import ReplayBuffer
@@ -22,6 +24,7 @@ import matplotlib.colors as colors
 MAX_EPISODES = 50000
 # Episodes with noise
 NOISE_MAX_EP = 1000
+#NOISE_MAX_EP = 10
 # Noise parameters - Ornstein Uhlenbeck
 DELTA = 0.5 # The rate of change (time)
 SIGMA = 0.5 # Volatility of the stochastic processes
@@ -57,6 +60,7 @@ MINIBATCH_SIZE = 32
 
 GAME = 'StageWorld'
 
+velocity_list_filename = 'velocity_list.dat'
 # ===========================
 #   Tensorflow Summary Ops
 # ===========================
@@ -94,6 +98,15 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
     critic.update_target_network()
 
     buff = ReplayBuffer(BUFFER_SIZE)    #Create replay buffer
+
+    velocity_list = list()
+
+    # first time you run this, "velocity_list.dat" won't exist
+    # so we need to check for its existence before we load 
+    # our "database"
+    if os.path.exists(velocity_list_filename):
+        with open(velocity_list_filename, 'rb') as rfp:
+            velocity_list = pickle.load(rfp)
 
     # plot settings
     fig = plt.figure()
@@ -146,7 +159,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             state = state1
 
             a = actor.predict(np.reshape(state, (1, actor.s_dim)))
-            switch_a = critic.predict_switch(np.reshape(state, (1, actor.s_dim)))
+            switch_a = critic.predict_switch(np.reshape(state, (1, actor.s_dim))) #switch critic
             switch_a_t = np.zeros([SWITCH])
             # Add exploration noise
             if i < NOISE_MAX_EP:
@@ -162,15 +175,12 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 switch_index = np.argmax(switch_a[0])
                 switch_a_t[switch_index] = 1
 
+            #switch_index = 0 #prevents PID control
             if switch_index == 1:
 	            a = env.PIDController(action_bound)
 	            ep_PID_count += 1.
 	            print("-----------PID Controller---------------")
 
-            ## FOR TESTING ###########
-            print("Time is {}".format(time.time()))
-            print("Action is {}".format(a))
-            #########################
 
             # Set action for discrete and continuous action spaces
             # To check action: print("Action is {}".format(a))
@@ -181,6 +191,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             if  action[0] <= 0.05:
                  action[0] = 0.05
             env.Control(action)
+
+            velocity_list.append((action[0], action[1], ou_level)) #append velocities to list
 
             # plot
             if j == 1:
@@ -256,8 +268,19 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
 
         summary_writer.flush()
 
-        if i > 0 and i % 10 == 0 :
-            saver.save(sess, 'saved_networks/' + GAME + '-dqn', global_step = i) 
+        if i > 0 and i % 100 == 0 :
+            print("Saving network...")
+            saver.save(sess, 'saved_networks/' + GAME + '-dqn', global_step = i)
+
+            #append to text file
+            print("Saving velocities...")
+            # Now we "sync" our database
+            with open(velocity_list_filename,'wb') as wfp:
+                pickle.dump(velocity_list, wfp)
+            # Re-load our database
+            with open(velocity_list_filename,'rb') as rfp:
+                velocity_list = pickle.load(rfp)
+            print("Save complete")
 
         print '| Reward: %.2f' % ep_reward, " | Episode:", i, \
         '| Qmax: %.4f' % (ep_ave_max_q / float(j)), \
@@ -274,7 +297,8 @@ def main(_):
         state_dim = LASER_BEAM * LASER_HIST + SPEED + TARGET
 
         action_dim = ACTION
-        action_bound = [0.5, np.pi/3]
+        #action_bound = [0.25, np.pi/6] #bounded acceleration
+        action_bound = [0.5, np.pi/3] #bounded velocity
         switch_dim = SWITCH
 
         discrete = False
