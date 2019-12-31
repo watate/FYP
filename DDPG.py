@@ -61,6 +61,7 @@ MINIBATCH_SIZE = 32
 GAME = 'StageWorld'
 
 save_velocity_bool = 0
+load_replay_buffer_bool = 0
 velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 # ===========================
@@ -102,9 +103,10 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
     buff = ReplayBuffer(BUFFER_SIZE)    #Create replay buffer
 
     # Check if replay buffer exists, reload it if it does
-    if os.path.exists(replay_buffer_filename):
-        with open(replay_buffer_filename, 'rb') as rfp:
-            buff = pickle.load(rfp)
+    if load_replay_buffer_bool == 1:
+        if os.path.exists(replay_buffer_filename):
+            with open(replay_buffer_filename, 'rb') as rfp:
+                buff = pickle.load(rfp)
 
     if save_velocity_bool == 1:        
         velocity_list = list()
@@ -293,14 +295,15 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 with open(velocity_list_filename,'rb') as rfp:
                     velocity_list = pickle.load(rfp)
 
-            #save replay buffer
-            print("Saving replay buffer...")
-            # Now we "sync" our database
-            with open(replay_buffer_filename,'wb') as wfp:
-                pickle.dump(buff, wfp)
-            # Re-load our database
-            with open(replay_buffer_filename,'rb') as rfp:
-                buff = pickle.load(rfp)
+            if load_replay_buffer_bool == 1:
+                #save replay buffer
+                print("Saving replay buffer...")
+                # Now we "sync" our database
+                with open(replay_buffer_filename,'wb') as wfp:
+                    pickle.dump(buff, wfp)
+                # Re-load our database
+                with open(replay_buffer_filename,'rb') as rfp:
+                    buff = pickle.load(rfp)
 
             print("Save complete")
 
