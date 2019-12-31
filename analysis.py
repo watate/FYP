@@ -18,14 +18,8 @@ for i in velocity_list:
 	linear_velocity.append(i[0])
 	angular_velocity.append(i[1])
 	noise.append(i[2])
-	difference.append(i[0] - i[2])
+	#difference.append(i[0] - i[2])
 
-x = np.linspace(1, len(linear_velocity), len(linear_velocity))
-plt.plot(x, difference)
-plt.xlabel('Timestep')
-plt.ylabel('Difference')
-plt.title('Difference vs Timestep')
-plt.show()
 
 #plot linear velocity
 x = np.linspace(1, len(linear_velocity), len(linear_velocity))
@@ -47,4 +41,11 @@ plt.plot(x, noise)
 plt.xlabel('Timestep')
 plt.ylabel('Noise')
 plt.title('Noise vs Timestep')
+plt.show()
+
+x = np.linspace(1, len(linear_velocity), len(linear_velocity))
+plt.plot(x, difference)
+plt.xlabel('Timestep')
+plt.ylabel('Difference')
+plt.title('Difference vs Timestep')
 plt.show()

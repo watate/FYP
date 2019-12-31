@@ -61,6 +61,7 @@ MINIBATCH_SIZE = 32
 GAME = 'StageWorld'
 
 velocity_list_filename = 'velocity_list.dat'
+replay_buffer_filename = 'replay_buffer.dat'
 # ===========================
 #   Tensorflow Summary Ops
 # ===========================
@@ -99,6 +100,12 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
 
     buff = ReplayBuffer(BUFFER_SIZE)    #Create replay buffer
 
+    # Check if replay buffer exists, reload it if it does
+    if os.path.exists(replay_buffer_filename):
+        with open(replay_buffer_filename, 'rb') as rfp:
+            buff = pickle.load(rfp)
+
+
     velocity_list = list()
 
     # first time you run this, "velocity_list.dat" won't exist
@@ -107,6 +114,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
     if os.path.exists(velocity_list_filename):
         with open(velocity_list_filename, 'rb') as rfp:
             velocity_list = pickle.load(rfp)
+
 
     # plot settings
     fig = plt.figure()
@@ -268,7 +276,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
 
         summary_writer.flush()
 
-        if i > 0 and i % 100 == 0 :
+        if i > 0 and i % 1000 == 0 :
             print("Saving network...")
             saver.save(sess, 'saved_networks/' + GAME + '-dqn', global_step = i)
 
@@ -280,6 +288,16 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             # Re-load our database
             with open(velocity_list_filename,'rb') as rfp:
                 velocity_list = pickle.load(rfp)
+
+            #save replay buffer
+            print("Saving replay buffer...")
+            # Now we "sync" our database
+            with open(replay_buffer_filename,'wb') as wfp:
+                pickle.dump(buff, wfp)
+            # Re-load our database
+            with open(replay_buffer_filename,'rb') as rfp:
+                buff = pickle.load(rfp)
+
             print("Save complete")
 
         print '| Reward: %.2f' % ep_reward, " | Episode:", i, \
