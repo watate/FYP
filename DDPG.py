@@ -60,6 +60,7 @@ MINIBATCH_SIZE = 32
 
 GAME = 'StageWorld'
 
+save_velocity_bool = 0
 velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 # ===========================
@@ -105,15 +106,16 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         with open(replay_buffer_filename, 'rb') as rfp:
             buff = pickle.load(rfp)
 
-
-    velocity_list = list()
+    if save_velocity_bool == 1:        
+        velocity_list = list()
 
     # first time you run this, "velocity_list.dat" won't exist
     # so we need to check for its existence before we load 
     # our "database"
-    if os.path.exists(velocity_list_filename):
-        with open(velocity_list_filename, 'rb') as rfp:
-            velocity_list = pickle.load(rfp)
+    if save_velocity_bool == 1:
+        if os.path.exists(velocity_list_filename):
+            with open(velocity_list_filename, 'rb') as rfp:
+                velocity_list = pickle.load(rfp)
 
 
     # plot settings
@@ -200,7 +202,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                  action[0] = 0.05
             env.Control(action)
 
-            velocity_list.append((action[0], action[1], ou_level)) #append velocities to list
+            if save_velocity_bool == 1:
+                velocity_list.append((action[0], action[1], ou_level)) #append velocities to list
 
             # plot
             if j == 1:
@@ -280,14 +283,15 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             print("Saving network...")
             saver.save(sess, 'saved_networks/' + GAME + '-dqn', global_step = i)
 
-            #append to text file
-            print("Saving velocities...")
-            # Now we "sync" our database
-            with open(velocity_list_filename,'wb') as wfp:
-                pickle.dump(velocity_list, wfp)
-            # Re-load our database
-            with open(velocity_list_filename,'rb') as rfp:
-                velocity_list = pickle.load(rfp)
+            if save_velocity_bool == 1:
+                #append to text file
+                print("Saving velocities...")
+                # Now we "sync" our database
+                with open(velocity_list_filename,'wb') as wfp:
+                    pickle.dump(velocity_list, wfp)
+                # Re-load our database
+                with open(velocity_list_filename,'rb') as rfp:
+                    velocity_list = pickle.load(rfp)
 
             #save replay buffer
             print("Saving replay buffer...")
