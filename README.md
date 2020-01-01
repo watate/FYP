@@ -36,7 +36,11 @@ cv2
 
 roscore
 
+rosrun stage_ros stageros worlds/Blank.world
+
 rosrun stage_ros stageros worlds/Obstacles.world
+
+rosrun stage_ros stageros worlds/Obstacles3.world
 
 python DDPG.py
 
