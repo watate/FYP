@@ -17,7 +17,7 @@ from nav_msgs.msg import Odometry
 from rosgraph_msgs.msg import Clock
 
 class StageWorld():
-	def __init__(self, beam_num):
+	def __init__(self, beam_num, map_type):
 		 # initiliaze
 		rospy.init_node('StageWorld', anonymous=False)
 
@@ -46,7 +46,8 @@ class StageWorld():
 		self.step_r_cnt = 0.
 		self.stop_counter = 0
 
-		map_img = cv2.imread('./worlds/Obstacles.jpg', 0)
+		#map_img = cv2.imread('./worlds/Obstacles.jpg', 0)
+		map_img = cv2.imread(map_type, 0)
 		ret, binary_map = cv2.threshold(map_img,10,1,cv2.THRESH_BINARY)
 		binary_map = 1 - binary_map
 		# cv2.imshow('img',binary_map*255)

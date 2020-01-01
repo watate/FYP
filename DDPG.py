@@ -23,8 +23,8 @@ import matplotlib.colors as colors
 # Maximum episodes run
 MAX_EPISODES = 50000
 # Episodes with noise
-NOISE_MAX_EP = 1000
-#NOISE_MAX_EP = 10
+#NOISE_MAX_EP = 1000
+NOISE_MAX_EP = 50
 # Noise parameters - Ornstein Uhlenbeck
 DELTA = 0.5 # The rate of change (time)
 SIGMA = 0.5 # Volatility of the stochastic processes
@@ -61,6 +61,13 @@ BUFFER_SIZE = 20000
 MINIBATCH_SIZE = 32
 
 GAME = 'StageWorld'
+
+#map_type = './worlds/Obstacles.jpg'
+#map_type = './worlds/Obstacles3.jpg'
+map_type = './worlds/Blank.jpg'
+
+save_frequency = 500
+prevent_PID = 1
 
 save_velocity_bool = 0
 load_replay_buffer_bool = 0
@@ -189,7 +196,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 switch_index = np.argmax(switch_a[0])
                 switch_a_t[switch_index] = 1
 
-            #switch_index = 0 #prevents PID control
+            if prevent_PID == 1:
+                switch_index = 0 #prevents PID control
             if switch_index == 1:
 	            a = env.PIDController(action_bound)
 	            ep_PID_count += 1.
@@ -283,7 +291,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
 
         summary_writer.flush()
 
-        if i > 0 and i % 1000 == 0 :
+        if i > 0 and i % save_frequency == 0 :
             print("Saving network...")
             saver.save(sess, 'saved_networks/' + GAME + '-dqn', global_step = i)
 
@@ -317,7 +325,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
 
 def main(_):
     with tf.Session() as sess:
-        env = StageWorld(LASER_BEAM)
+        env = StageWorld(LASER_BEAM, map_type)
         np.random.seed(RANDOM_SEED)
         tf.set_random_seed(RANDOM_SEED)
 
