@@ -47,6 +47,8 @@ GAMMA = 0.99
 TAU = 0.001
 
 LASER_BEAM = 40
+#LASER_HIST is laser history. Makes DDPG take into account current laser and previous laser scans.
+#LASER_HIST = 3 means that DDPG has to account for 3 scans (current, previous, previous previous)
 LASER_HIST = 3
 ACTION = 2
 TARGET = 2
@@ -156,7 +158,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         while not terminal and not rospy.is_shutdown():
             s1 = env.GetLaserObservation()
             s_1 = np.append(np.reshape(s1, (LASER_BEAM, 1)), s_1[:, :(LASER_HIST - 1)], axis=1)
-            s__1 = np.reshape(s_1, (LASER_BEAM * LASER_HIST))
+            s__1 = np.reshape(s_1, (LASER_BEAM * LASER_HIST)) 
             target1 = env.GetLocalTarget()
             speed1 = env.GetSelfSpeed()
             state1 = np.concatenate([s__1, speed1, target1], axis=0)
