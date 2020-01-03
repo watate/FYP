@@ -158,11 +158,13 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         print 'Target: (%.4f, %.4f)' % (env.target_point[0], env.target_point[1])
         target_distance = copy.deepcopy(env.distance)
         ep_reward = 0.
-        ep_ave_max_q = 0.
+        ep_ave_max_q = 0. #another terribly named variable. 
+                            # ep_ave_max_q is not episode average (even though the name implies it)
+                            # but strictly the max (it accumulates and is later divided to find average)
         loop_time_buf = []
         terminal = False
 
-        j = 0
+        j = 0 #j is time or timestep (who labeled time as j though)
         ep_reward = 0
         ep_ave_max_q = 0
         ep_PID_count = 0.
@@ -369,11 +371,11 @@ def main(_):
         discrete = False
         print('Continuous Action Space')
 
-        actor = ActorNetwork(sess, state_dim, action_dim, action_bound,
-        						ACTOR_LEARNING_RATE, TAU)
+        actor = ActorNetwork(sess, state_dim, action_dim, action_bound, 
+            ACTOR_LEARNING_RATE, TAU)
 
-        critic = CriticNetwork(sess, state_dim, action_dim, switch_dim,
-        						CRITIC_LEARNING_RATE, TAU, actor.get_num_trainable_vars())
+        critic = CriticNetwork(sess, state_dim, action_dim, switch_dim, 
+            CRITIC_LEARNING_RATE, TAU, actor.get_num_trainable_vars())
 
         noise = Noise(DELTA, SIGMA, OU_A, OU_MU)
         reward = Reward(REWARD_FACTOR, GAMMA)
