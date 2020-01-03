@@ -44,6 +44,8 @@ rosrun stage_ros stageros worlds/Obstacles3.world
 
 python DDPG.py
 
+tensorboard --logdir [directory name]
+
 ## Citation
 
 If you use this method in your research, please cite:
