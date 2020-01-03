@@ -1,6 +1,0 @@
-model_checkpoint_path: "StageWorld-dqn-7300"
-all_model_checkpoint_paths: "StageWorld-dqn-6900"
-all_model_checkpoint_paths: "StageWorld-dqn-7000"
-all_model_checkpoint_paths: "StageWorld-dqn-7100"
-all_model_checkpoint_paths: "StageWorld-dqn-7200"
-all_model_checkpoint_paths: "StageWorld-dqn-7300"
