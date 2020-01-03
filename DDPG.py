@@ -24,7 +24,7 @@ import matplotlib.colors as colors
 MAX_EPISODES = 50000
 # Episodes with noise
 #NOISE_MAX_EP = 1000
-NOISE_MAX_EP = 50
+NOISE_MAX_EP = 1
 # Noise parameters - Ornstein Uhlenbeck
 DELTA = 0.5 # The rate of change (time)
 SIGMA = 0.5 # Volatility of the stochastic processes
@@ -62,29 +62,31 @@ MINIBATCH_SIZE = 32
 
 GAME = 'StageWorld'
 
-#map_type = './worlds/Obstacles.jpg'
-#map_type = './worlds/Obstacles3.jpg'
-map_type = './worlds/Blank.jpg'
+#map_name = 'Obstacles'
+map_name = 'Obstacles3'
+#map_name = 'Blank'
+map_type = './worlds/' + map_name + '.jpg'
 
-save_frequency = 500
-prevent_PID = 1
+save_frequency = 5
+prevent_PID = 0
 
-save_velocity_bool = 0
+save_velocity_bool = 0 #don't forget to change save_frequency to save velocity
 load_replay_buffer_bool = 0
 velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
+current_date_time = time.strftime("%Y%m%d-%H%M%S")
 # ===========================
 #   Tensorflow Summary Ops
 # ===========================
 
 def build_summaries():
     episode_reward = tf.Variable(0.)
-    tf.summary.scalar("Reward", episode_reward)
+    tf.compat.v1.Summary.scalar("Reward", episode_reward)
     episode_ave_max_q = tf.Variable(0.)
-    tf.summary.scalar("Qmax Value", episode_ave_max_q)
+    tf.compat.v1.Summary.scalar("Qmax Value", episode_ave_max_q)
 
     summary_vars = [episode_reward, episode_ave_max_q]
-    summary_ops = tf.summary.merge_all()
+    summary_ops = tf.compat.v1.Summary.merge_all()
 
     return summary_ops, summary_vars
 
@@ -93,10 +95,12 @@ def build_summaries():
 # ===========================
 def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
     # Set up summary writer
-    summary_writer = tf.summary.FileWriter("ddpg_summary")
+    summary_writer = tf.compat.v1.summary.FileWriter("ddpg_summary/" + current_date_time)
+    #add sessions graph to our summary writer
+    summary_writer.add_graph(sess.graph)
 
-    saver = tf.train.Saver()
-    sess.run(tf.global_variables_initializer())
+    saver = tf.compat.v1.train.Saver()
+    sess.run(tf.compat.v1.global_variables_initializer())
     checkpoint = tf.train.get_checkpoint_state("saved_networks")
     print('checkpoint:', checkpoint)
     if checkpoint and checkpoint.model_checkpoint_path:
@@ -193,8 +197,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 switch_index = random.randrange(SWITCH)
                 switch_a_t[switch_index] = 1
             else:
-                switch_index = np.argmax(switch_a[0])
-                switch_a_t[switch_index] = 1
+                switch_index = np.argmax(switch_a[0]) #switch_index gets the index of the largest value in switch_a[0]
+                switch_a_t[switch_index] = 1 #switch_a_t
 
             if prevent_PID == 1:
                 switch_index = 0 #prevents PID control
@@ -279,7 +283,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         if epsilon > FINAL_EPSILON:
             epsilon -= (INITIAL_EPSILON - FINAL_EPSILON) / NOISE_MAX_EP
 
-        summary = tf.Summary()
+        summary = tf.compat.v1.Summary()
         summary.value.add(tag='Reward', simple_value=float(ep_reward))
         summary.value.add(tag='Qmax', simple_value=float(ep_ave_max_q / float(j)))
         summary.value.add(tag='PIDrate', simple_value=float(ep_PID_count / float(j)))
@@ -315,6 +319,31 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 with open(replay_buffer_filename,'rb') as rfp:
                     buff = pickle.load(rfp)
 
+            if i == save_frequency:
+                #print configuration information as text file in ddpg_summary
+                print("Saving training configuration text file...")
+                with open("ddpg_summary/" + current_date_time + "/Config.txt", "w") as text_file:
+                    line1 = "NOISE_MAX_EP: {0} \n".format(NOISE_MAX_EP)
+                    line2 = "map_name: {0} \n".format(map_name)
+                    line3 = "prevent_PID: {0} \n".format(prevent_PID)
+                    line4 = "save_frequency: {0} \n".format(save_frequency)
+                    line5 = "LASER_BEAM: {0} \n".format(LASER_BEAM)
+                    line6 = "save_velocity_bool: {0} \n".format(save_velocity_bool)
+                    line7 = "load_replay_buffer_bool: {0} \n".format(load_replay_buffer_bool)
+                    line8 = "current_date_time: {0} \n".format(current_date_time) 
+                    text_file.writelines([line1, line2, line3, line4, line5, line6, line7, line8])
+
+                with open("saved_networks/Config.txt", "w") as text_file:
+                    line1 = "NOISE_MAX_EP: {0} \n".format(NOISE_MAX_EP)
+                    line2 = "map_name: {0} \n".format(map_name)
+                    line3 = "prevent_PID: {0} \n".format(prevent_PID)
+                    line4 = "save_frequency: {0} \n".format(save_frequency)
+                    line5 = "LASER_BEAM: {0} \n".format(LASER_BEAM)
+                    line6 = "save_velocity_bool: {0} \n".format(save_velocity_bool)
+                    line7 = "load_replay_buffer_bool: {0} \n".format(load_replay_buffer_bool)
+                    line8 = "current_date_time: {0} \n".format(current_date_time) 
+                    text_file.writelines([line1, line2, line3, line4, line5, line6, line7, line8])
+
             print("Save complete")
 
         print '| Reward: %.2f' % ep_reward, " | Episode:", i, \
@@ -324,10 +353,11 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
 
 
 def main(_):
-    with tf.Session() as sess:
+
+    with tf.compat.v1.Session() as sess:
         env = StageWorld(LASER_BEAM, map_type)
         np.random.seed(RANDOM_SEED)
-        tf.set_random_seed(RANDOM_SEED)
+        tf.compat.v1.set_random_seed(RANDOM_SEED)
 
         state_dim = LASER_BEAM * LASER_HIST + SPEED + TARGET
 
@@ -355,4 +385,4 @@ def main(_):
 
 
 if __name__ == '__main__':
-    tf.app.run()
+    tf.compat.v1.app.run()
