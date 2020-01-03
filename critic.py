@@ -40,7 +40,7 @@ def batch_norm(x, n_out, phase_train):
     return normed
 
 def weight_variable(shape):
-    initial = tf.truncated_normal(shape, stddev=0.01)
+    initial = tf.random.truncated_normal(shape, stddev=0.01)
     return tf.Variable(initial)
 
 def bias_variable(shape):
@@ -67,13 +67,13 @@ class CriticNetwork(object):
         # Create the critic network
         self.inputs, self.action, self.switch_a, self.out, self.switch_q, self.value = self.create_critic_network()
 
-        self.network_params = tf.trainable_variables()[num_actor_vars:]
+        self.network_params = tf.compat.v1.trainable_variables()[num_actor_vars:]
 
         # Target Network
         self.target_inputs, self.target_action, self.target_switch_a, self.target_out, self.target_switch_q, self.target_value = \
             self.create_critic_network()
 
-        self.target_network_params = tf.trainable_variables()[(len(self.network_params) + num_actor_vars):]
+        self.target_network_params = tf.compat.v1.trainable_variables()[(len(self.network_params) + num_actor_vars):]
 
         # Op for periodically updating target network with online network weights with regularization
         self.update_target_network_params = \
@@ -82,8 +82,8 @@ class CriticNetwork(object):
              for i in range(len(self.target_network_params))]
 
         # Network target (y_i)
-        self.predicted_q_value = tf.placeholder(tf.float32, [None, 1])
-        self.predicted_switch_q = tf.placeholder(tf.float32, [None])
+        self.predicted_q_value = tf.compat.v1.placeholder(tf.float32, [None, 1])
+        self.predicted_switch_q = tf.compat.v1.placeholder(tf.float32, [None])
 
         # Define switch loss
         self.readout_action = tf.reduce_sum(tf.multiply(self.switch_q, self.switch_a), axis=1)
@@ -91,7 +91,7 @@ class CriticNetwork(object):
         self.switch_loss = tf.reduce_mean(self.td_error)
         # Define loss and optimization Op
         self.loss = tf.sqrt(tf.reduce_mean(tf.square(tf.subtract(self.predicted_q_value, self.out))))
-        self.optimize = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss + self.switch_loss)
+        self.optimize = tf.compat.v1.train.AdamOptimizer(self.learning_rate).minimize(self.loss + self.switch_loss)
 
         # Get the gradient of the net w.r.t. the action
         
@@ -105,9 +105,9 @@ class CriticNetwork(object):
         # self.action_grads = tf.gradients(self.out, self.action)
 
     def create_critic_network(self):
-        inputs = tf.placeholder(tf.float32, [None, self.s_dim])
-        action = tf.placeholder(tf.float32, [None, self.a_dim])
-        switch_a = tf.placeholder(tf.float32, [None, self.switch_dim])
+        inputs = tf.compat.v1.placeholder(tf.float32, [None, self.s_dim])
+        action = tf.compat.v1.placeholder(tf.float32, [None, self.a_dim])
+        switch_a = tf.compat.v1.placeholder(tf.float32, [None, self.switch_dim])
 
         # FC1 10x64
         w_fc1 = weight_variable([self.s_dim, n_hidden_1])

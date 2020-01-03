@@ -40,7 +40,7 @@ def batch_norm(x, n_out, phase_train):
     return normed
 
 def weight_variable(shape):
-    initial = tf.truncated_normal(shape, stddev=0.01)
+    initial = tf.random.truncated_normal(shape, stddev=0.01)
     return tf.Variable(initial)
 
 def bias_variable(shape):
@@ -69,12 +69,12 @@ class ActorNetwork(object):
         # Actor Network
         self.inputs, self.out, self.scaled_out = self.create_actor_network()
 
-        self.network_params = tf.trainable_variables()
+        self.network_params = tf.compat.v1.trainable_variables()
 
         # Target Network
         self.target_inputs, self.target_out, self.target_scaled_out = self.create_actor_network()
 
-        self.target_network_params = tf.trainable_variables()[len(self.network_params):]
+        self.target_network_params = tf.compat.v1.trainable_variables()[len(self.network_params):]
 
         # Op for periodically updating target network with online network weights
         self.update_target_network_params = \
@@ -83,19 +83,19 @@ class ActorNetwork(object):
              for i in range(len(self.target_network_params))]
 
         # This gradient will be provided by the critic network
-        self.action_gradient = tf.placeholder(tf.float32, [None, self.a_dim])
+        self.action_gradient = tf.compat.v1.placeholder(tf.float32, [None, self.a_dim])
 
         # Combine the gradients here
         self.actor_gradients = tf.gradients(self.scaled_out, self.network_params, -self.action_gradient)
 
         # Optimization Op by applying gradient, variable pairs
-        self.optimize = tf.train.AdamOptimizer(self.learning_rate). \
+        self.optimize = tf.compat.v1.train.AdamOptimizer(self.learning_rate). \
             apply_gradients(zip(self.actor_gradients, self.network_params))
 
         self.num_trainable_vars = len(self.network_params) + len(self.target_network_params)
 
     def create_actor_network(self):
-        inputs = tf.placeholder(tf.float32, [None, self.s_dim])
+        inputs = tf.compat.v1.placeholder(tf.float32, [None, self.s_dim])
 
         # FC1 
         w_fc1 = weight_variable([self.s_dim, n_hidden_1])
