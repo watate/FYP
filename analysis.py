@@ -6,7 +6,6 @@ import seaborn as sns
 import pandas as pd
 sns.set(style="darkgrid")
 
-
 velocity_list_filename = 'velocity_list.dat'
 
 if os.path.exists(velocity_list_filename):
@@ -54,10 +53,15 @@ for i in linear_acceleration:
 	previous_accel = current_accel
 
 
-df = pd.DataFrame(dict(time=np.arange(500),
-                       value=np.random.randn(500).cumsum()))
-g = sns.relplot(x="time", y="value", kind="line", data=df)
-g.fig.autofmt_xdate()
+############## VISUALIZATION ##################
+
+# df = pd.DataFrame(dict(time=np.arange(len(linear_velocity)),
+#                        linear_velocity=linear_velocity,
+# 						linear_acceleration=linear_acceleration,
+# 						linear_jerk=linear_jerk))
+# g = sns.relplot(x="time", y="linear_velocity", kind="line", data=df)
+# g.fig.autofmt_xdate()
+
 
 #plot linear velocity
 x = np.linspace(1, len(linear_velocity), len(linear_velocity))
