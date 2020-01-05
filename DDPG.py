@@ -67,8 +67,8 @@ map_name = 'Obstacles3'
 #map_name = 'Blank'
 map_type = './worlds/' + map_name + '.jpg'
 
-save_frequency = 5
-prevent_PID = 0
+save_frequency = 100
+prevent_PID = 1
 
 save_velocity_bool = 0 #don't forget to change save_frequency to save velocity
 load_replay_buffer_bool = 0
@@ -174,6 +174,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             s__1 = np.reshape(s_1, (LASER_BEAM * LASER_HIST)) 
             target1 = env.GetLocalTarget()
             speed1 = env.GetSelfSpeed()
+            if save_velocity_bool == 1:
+                velocity_list.append((speed1[0], speed1[1])) #append velocities to list
             state1 = np.concatenate([s__1, speed1, target1], axis=0)
             [x, y, theta] =  env.GetSelfStateGT()
             map_img = env.RenderMap([[0, 0], env.target_point])
@@ -192,6 +194,17 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             if i < NOISE_MAX_EP:
                 ou_level = noise.ornstein_uhlenbeck_level(ou_level)
                 a = a + ou_level
+
+                #print("a[0][1] is {}".format(a[0][1]))
+                #bound action and noise to limits
+                if a[0][0] > action_bound[0]:
+                    a[0][0] = action_bound[0]
+                if a[0][1] > action_bound[1]:
+                    a[0][1] = action_bound[1]
+                if a[0][1] < -action_bound[1]:
+                    a[0][1] = -action_bound[1]
+
+                #print("a[0][1] is {}".format(a[0][1]))
 
 
             if random.random() <= epsilon:
@@ -217,11 +230,28 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             # everything else is 0
             action = a[0]
             if  action[0] <= 0.05:
-                 action[0] = 0.05
+                action[0] = 0.05
+
+            ######## VELOCITY SMOOTHER ################
+            #See: https://robotics.stackexchange.com/questions/18237/what-is-a-velocity-smoother
+            # target_speed = a
+            # control_speed = speed1
+
+            # print("a is {}".format(a))
+            # print("action is {}".format(action))
+            # print("v is {}".format(action - [0.10, 0.20]))
+
+            # if target_speed > control_speed:
+            #     control_speed = min(target_speed, control_speed + [0.10, 0.20])
+            # elif target_speed < control_speed:
+            #     control_speed = max(target_speed, control_speed - [0.10, 0.20])
+            # else:
+            #     control_speed = target_speed
+            #############################################
             env.Control(action)
 
-            if save_velocity_bool == 1:
-                velocity_list.append((action[0], action[1], ou_level)) #append velocities to list
+            #if save_velocity_bool == 1:
+            #    velocity_list.append((action[0], action[1], ou_level)) #append velocities to list
 
             # plot
             if j == 1:
