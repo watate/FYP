@@ -62,16 +62,16 @@ MINIBATCH_SIZE = 32
 
 GAME = 'StageWorld'
 
-#map_name = 'Obstacles'
-map_name = 'Obstacles3'
+map_name = 'Obstacles'
+#map_name = 'Obstacles3'
 #map_name = 'Blank'
 map_type = './worlds/' + map_name + '.jpg'
 
 save_frequency = 100
 prevent_PID = 1
 
-save_velocity_bool = 0 #don't forget to change save_frequency to save velocity
-load_replay_buffer_bool = 0
+save_velocity_bool = 1 #don't forget to change save_frequency to save velocity
+load_replay_buffer_bool = 1
 velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 current_date_time = time.strftime("%Y%m%d-%H%M%S")

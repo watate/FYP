@@ -1,0 +1,8 @@
+NOISE_MAX_EP: 1 
+map_name: Obstacles3 
+prevent_PID: 1 
+save_frequency: 1000 
+LASER_BEAM: 40 
+save_velocity_bool: 0 
+load_replay_buffer_bool: 1 
+current_date_time: 20200104-000958 
