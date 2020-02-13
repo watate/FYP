@@ -132,10 +132,10 @@ class StageWorld():
 
 	def GetLaserObservation(self):
 		scan = copy.deepcopy(self.scan)
-		scan[np.isnan(scan)] = 5.6
-		scan[np.isinf(scan)] = 5.6
-		raw_beam_num = len(scan)
-		sparse_beam_num = self.beam_num
+		scan[np.isnan(scan)] = 5.6 #bad numbers become 5.6
+		scan[np.isinf(scan)] = 5.6 #infinite numbers become 5.6
+		raw_beam_num = len(scan) #how many beams?
+		sparse_beam_num = self.beam_num #
 		step = float(raw_beam_num) / sparse_beam_num
 		sparse_scan_left = []
 		index = 0.
