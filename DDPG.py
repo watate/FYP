@@ -75,6 +75,8 @@ load_replay_buffer_bool = 1
 velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 current_date_time = time.strftime("%Y%m%d-%H%M%S")
+
+config_notes = "" #Write stuff here to explain what training was for
 # ===========================
 #   Tensorflow Summary Ops
 # ===========================
@@ -161,6 +163,10 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         ep_ave_max_q = 0. #another terribly named variable. 
                             # ep_ave_max_q is not episode average (even though the name implies it)
                             # but strictly the max (it accumulates and is later divided to find average)
+                                # That is, ep_ave_max_q += max of predicted q (see below)
+                            # See how Qmax is calculated in tf.summary to understand why this name doesn't make sense
+                                # Qmax is ep_ave_max_q / j (where j is number of timesteps)
+                                # So Qmax is the average maximum Q-value of an episode
         loop_time_buf = []
         terminal = False
 
@@ -294,7 +300,10 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                                                     np.reshape(y_i, (MINIBATCH_SIZE, 1)),\
                                                     switch_y)
 
+                #np amax and max are the same, they both find the max of the array
+                    #in this case, it is looking for the maximum predicted q in the episode and adding it to ep_ave_max_q
                 ep_ave_max_q += np.amax(predicted_q_value)
+
 
                 # Update the actor policy using the sampled gradient
                 a_outs = actor.predict(s_batch)
@@ -363,7 +372,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                     line6 = "save_velocity_bool: {0} \n".format(save_velocity_bool)
                     line7 = "load_replay_buffer_bool: {0} \n".format(load_replay_buffer_bool)
                     line8 = "current_date_time: {0} \n".format(current_date_time) 
-                    text_file.writelines([line1, line2, line3, line4, line5, line6, line7, line8])
+                    line9 = "config_notes: {0} \n".format(config_notes)
+                    text_file.writelines([line1, line2, line3, line4, line5, line6, line7, line8, line9])
 
                 with open("saved_networks/Config.txt", "w") as text_file:
                     line1 = "NOISE_MAX_EP: {0} \n".format(NOISE_MAX_EP)
@@ -374,7 +384,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                     line6 = "save_velocity_bool: {0} \n".format(save_velocity_bool)
                     line7 = "load_replay_buffer_bool: {0} \n".format(load_replay_buffer_bool)
                     line8 = "current_date_time: {0} \n".format(current_date_time) 
-                    text_file.writelines([line1, line2, line3, line4, line5, line6, line7, line8])
+                    line9 = "config_notes: {0} \n".format(config_notes)
+                    text_file.writelines([line1, line2, line3, line4, line5, line6, line7, line8, line9])
 
             print("Save complete")
 
