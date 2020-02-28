@@ -1,4 +1,6 @@
-#Plot Generation (After data processing in analysis2)
+#Generate graphs from dataframe created in analysis_tf_summary.py
+#A lot of code here has been commented out
+	#uncomment the code if you would like to make different graphs (e.g. histograms)
 
 import pickle
 import os
@@ -6,6 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb
 import pandas as pd
+
+#filename = 
+filename = "20200226-093050_3000b_dataframe.dat"
 
 #prevent xlabel cutting off
 	#see: https://stackoverflow.com/questions/6774086/why-is-my-xlabel-cut-off-in-my-matplotlib-plot
@@ -16,38 +21,19 @@ rcParams.update({'figure.autolayout': True})
 #Initial settings
 sb.set(style="darkgrid")
 
-#Loading the DataFrame generated from preprocess (analysis2.py)
-if os.path.exists('analysis_dataframe.dat'):
-    with open('analysis_dataframe.dat', 'rb') as rfp:
+#Loading the DataFrame generated from preprocess (analysis_tf_summary.py)
+if os.path.exists(filename):
+    with open(filename, 'rb') as rfp:
         df = pickle.load(rfp)
 
-# #Generating the DataFrame
-# df = pd.DataFrame(dict(time=np.arange(len(linear_velocity)),
-#                        linear_velocity=linear_velocity,
-# 						linear_acceleration=linear_acceleration,
-# 						linear_jerk=linear_jerk,
-# 						angular_velocity=angular_velocity,
-# 						angular_acceleration=angular_acceleration,
-# 						angular_jerk=angular_jerk,
-# 						))
-
-plots = ["linear_velocity", "linear_acceleration", "linear_jerk", "angular_velocity", "angular_acceleration", "angular_jerk"]
-
-######### ANGULAR ############
-#Set Paper
+##############################################################################
+#Plot and produce initial raw data
+plots = ["reward", "q_max", "pid_rate", "distance", "result", "steps"]
+#Set Paper as format for graphs
 sb.set_context("paper") #other formats: "talk", "poster"
 
-save_dir = "pictures/paper/"
+save_dir = "pictures/raw/"
 fig_dpi = 300
-
-#Generating histograms
-for i in plots:
-	g = sb.distplot(df[i], kde = False)
-	fig = g.get_figure()
-	fig.savefig(save_dir + "paper_" + i + "_hist" + ".png", dpi=fig_dpi)
-	plt.cla()
-	plt.clf()
-	plt.close("all")
 
 #Generating line graphs
 for i in plots:
@@ -58,29 +44,189 @@ for i in plots:
 	plt.cla()
 	plt.clf()
 	plt.close("all")
+##############################################################################
+##############################################################################
+#Divide raw data into:
+	#1. Data best represented on line graphs
+	#2. Data best represented on histograms
+##############################################################################
+#Data pre-processing
+line_plots = ["average_reward", "average_performance", "average_distance", "average_steps", "average_pid_rate"]
 
-#Set Talk
-sb.set_context("talk") #other formats: "talk", "poster"
-save_dir = "pictures/talk/"
+#Obtain raw values from previous dataframe
+reward = df["reward"]
+q_max = df["q_max"]
+distance = df["distance"]
+steps = df["steps"]
+pid_rate = df["pid_rate"]
 
-#Generating histograms
-for i in plots:
-	g = sb.distplot(df[i], kde = False)
-	fig = g.get_figure()
-	fig.savefig(save_dir + "talk_" + i + "_hist" + ".png", dpi=fig_dpi)
-	plt.cla()
-	plt.clf()
-	plt.close("all")
+#Separate the groups. The last slice will be fine with less than 100 numbers.
+groups = [reward[x:x+100] for x in range(0, len(reward), 100)]
+#calculate mean
+average_reward = [sum(group)/len(group) for group in groups]
+
+#repeat for other variables
+groups = [q_max[x:x+100] for x in range(0, len(q_max), 100)]
+average_performance = [sum(group)/len(group) for group in groups]
+groups = [distance[x:x+100] for x in range(0, len(distance), 100)]
+average_distance = [sum(group)/len(group) for group in groups]
+groups = [steps[x:x+100] for x in range(0, len(steps), 100)]
+average_steps = [sum(group)/len(group) for group in groups]
+groups = [pid_rate[x:x+100] for x in range(0, len(pid_rate), 100)]
+average_pid_rate = [sum(group)/len(group) for group in groups]
+
+#Generate second dataframe for averaged results
+df2 = pd.DataFrame(dict(time=np.arange(len(average_performance)),
+						average_reward=average_reward,
+						average_performance=average_performance,
+						average_distance=average_distance,
+						average_steps=average_steps,
+						average_pid_rate=average_pid_rate,
+						))
+##############################################################################
+##############################################################################
+#1. Data best represented on line graphs
+sb.set_context("paper") #other formats: "talk", "poster"
+
+save_dir = "pictures/paper/"
+fig_dpi = 300
 
 #Generating line graphs
-for i in plots:
-	g = sb.relplot(x="time", y=i, kind="line", data=df)
-	g.fig.autofmt_xdate()
+for i in line_plots:
+	g = sb.relplot(x="time", y=i, kind="line", data=df2)
+	#g.fig.autofmt_xdate()
 	fig = g.fig
-	fig.savefig(save_dir + "talk_" + i + "_line" + ".png", dpi=fig_dpi)
+	fig.savefig(save_dir + "paper_" + i + "_line" + ".png", dpi=fig_dpi)
 	plt.cla()
 	plt.clf()
 	plt.close("all")
+##############################################################################
+#2. Data best represented on histograms
+hist_plots = ["pid_rate", "result"]
+
+#Generating histograms
+for i in hist_plots:
+	g = sb.distplot(df[i], kde = False)
+	fig = g.get_figure()
+	fig.savefig(save_dir + "paper_" + i + "_hist" + ".png", dpi=fig_dpi)
+	plt.cla()
+	plt.clf()
+	plt.close("all")
+
+##############################################################################
+##############################################################################
+#1. Data best represented on line graphs
+sb.set_context("talk") #other formats: "talk", "poster"
+
+save_dir = "pictures/talk/"
+fig_dpi = 300
+
+#Generating line graphs
+for i in line_plots:
+	g = sb.relplot(x="time", y=i, kind="line", data=df2)
+	#g.fig.autofmt_xdate()
+	fig = g.fig
+	fig.savefig(save_dir + "paper_" + i + "_line" + ".png", dpi=fig_dpi)
+	plt.cla()
+	plt.clf()
+	plt.close("all")
+##############################################################################
+#2. Data best represented on histograms
+hist_plots = ["pid_rate", "result"]
+
+#Generating histograms
+for i in hist_plots:
+	g = sb.distplot(df[i], kde = False)
+	fig = g.get_figure()
+	fig.savefig(save_dir + "paper_" + i + "_hist" + ".png", dpi=fig_dpi)
+	plt.cla()
+	plt.clf()
+	plt.close("all")
+
+##############################################################################
+##############################################################################
+# #name plots
+# #these variables are best represented in terms of a line graph
+# #plots = ["reward", "q_max", "pid_rate", "distance", "result", "steps"]
+
+# ######### ANGULAR ############
+# #Set Paper as format for graphs
+# sb.set_context("paper") #other formats: "talk", "poster"
+
+# save_dir = "pictures/paper/"
+# fig_dpi = 300
+
+# # #Generating histograms
+# # for i in plots:
+# # 	g = sb.distplot(df[i], kde = False)
+# # 	fig = g.get_figure()
+# # 	fig.savefig(save_dir + "paper_" + i + "_hist" + ".png", dpi=fig_dpi)
+# # 	plt.cla()
+# # 	plt.clf()
+# # 	plt.close("all")
+
+# #Generating line graphs
+# for i in line_dataframe_names:
+# 	g = sb.relplot(x="time", y=i, kind="line", data=df)
+# 	#g.fig.autofmt_xdate()
+# 	fig = g.fig
+# 	fig.savefig(save_dir + "paper_" + i + "_line" + ".png", dpi=fig_dpi)
+# 	plt.cla()
+# 	plt.clf()
+# 	plt.close("all")
+
+# #Generate average performance graph
+# g = sb.relplot(x="time", y="average_performance", kind="line", data=df2)
+# #g.fig.autofmt_xdate()
+# g.set(xlabel='time (x10^2 episodes)', ylabel='average_performance')
+# fig = g.fig
+# fig.savefig(save_dir + "paper_" + "average_performance" + "_line" + ".png", dpi=fig_dpi)
+# plt.cla()
+# plt.clf()
+# plt.close("all")
+
+# #Set Talk as format for graphs
+# sb.set_context("talk") #other formats: "talk", "poster"
+# save_dir = "pictures/talk/"
+
+# #Generating line graphs
+# for i in plots:
+# 	g = sb.relplot(x="time", y=i, kind="line", data=df)
+# 	#g.fig.autofmt_xdate()
+# 	fig = g.fig
+# 	fig.savefig(save_dir + "paper_" + i + "_line" + ".png", dpi=fig_dpi)
+# 	plt.cla()
+# 	plt.clf()
+# 	plt.close("all")
+
+# #Generate average performance graph
+# g = sb.relplot(x="time", y="average_performance", kind="line", data=df2)
+# #g.fig.autofmt_xdate()
+# g.set(xlabel='time (x10^2 episodes)', ylabel='average_performance')
+# fig = g.fig
+# fig.savefig(save_dir + "paper_" + "average_performance" + "_line" + ".png", dpi=fig_dpi)
+# plt.cla()
+# plt.clf()
+# plt.close("all")
+
+# #Generating histograms
+# for i in plots:
+# 	g = sb.distplot(df[i], kde = False)
+# 	fig = g.get_figure()
+# 	fig.savefig(save_dir + "talk_" + i + "_hist" + ".png", dpi=fig_dpi)
+# 	plt.cla()
+# 	plt.clf()
+# 	plt.close("all")
+
+# #Generating line graphs
+# for i in plots:
+# 	g = sb.relplot(x="time", y=i, kind="line", data=df)
+# 	g.fig.autofmt_xdate()
+# 	fig = g.fig
+# 	fig.savefig(save_dir + "talk_" + i + "_line" + ".png", dpi=fig_dpi)
+# 	plt.cla()
+# 	plt.clf()
+# 	plt.close("all")
 
 
 

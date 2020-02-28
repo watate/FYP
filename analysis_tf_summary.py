@@ -9,7 +9,6 @@ import numpy as np
 import seaborn as sb
 import pandas as pd
 
-
 #list
 reward = list()
 q_max = list()
@@ -19,46 +18,48 @@ result = list()
 steps = list()
 
 
+folderdate = "20200226-093050"
+shortname = "3000b"
+
 #get data
-for e in tf.compat.v1.train.summary_iterator('ddpg_summary/20200106-214225/events.out.tfevents.1578318156.ubuntu'):
-    for v in e.summary.value:
-    	if v.tag == 'Reward':
-    		reward.append(v.simple_value)
+for e in tf.compat.v1.train.summary_iterator('ddpg_summary/' + folderdate + '/events.out.tfevents.1582738253.ubuntu'):
+	for v in e.summary.value:
+		if v.tag == 'Reward':
+			reward.append(v.simple_value)
 		if v.tag == 'Qmax':
-    		q_max.append(v.simple_value)
+			q_max.append(v.simple_value)
 		if v.tag == 'PIDrate':
-    		pid_rate.append(v.simple_value)
+			pid_rate.append(v.simple_value)
 		if v.tag == 'Distance':
-    		distance.append(v.simple_value)
-        if v.tag == 'Result':
-            result.append(v.simple_value)
-        if v.tag == 'Steps':
-            steps.append(v.simple_value)
+			distance.append(v.simple_value)
+		if v.tag == 'Result':
+			result.append(v.simple_value)
+		if v.tag == 'Steps':
+			steps.append(v.simple_value)
 
 
-crash = 0
-get_target = 0
-time_out = 0
-for i in result:
-	if i == 1: time_out = time_out + 1;
-	if i == 2: crash = crash + 1;
-	if i == 3: get_target = get_target + 1;
+# crash = 0
+# get_target = 0
+# time_out = 0
+# for i in result:
+# 	if i == 1: time_out = time_out + 1;
+# 	if i == 2: crash = crash + 1;
+# 	if i == 3: get_target = get_target + 1;
 
 
-print("Crash: {}".format(crash))
-print("Get Target: {}".format(get_target))
-print("Time Out: {}".format(time_out))
-
+# print("Crash: {}".format(crash))
+# print("Get Target: {}".format(get_target))
+# print("Time Out: {}".format(time_out))
 
 #Generating the DataFrame
-df = pd.DataFrame(dict(time=np.arange(len(linear_velocity)),
-                       linear_velocity=linear_velocity,
-						linear_acceleration=linear_acceleration,
-						linear_jerk=linear_jerk,
-						angular_velocity=angular_velocity,
-						angular_acceleration=angular_acceleration,
-						angular_jerk=angular_jerk,
+df = pd.DataFrame(dict(time=np.arange(len(reward)),
+						reward=reward,
+					   q_max=q_max,
+					   pid_rate=pid_rate,
+					   distance=distance,
+					   result=result,
+					   steps=steps,
 						))
 
-with open('analysis_dataframe.dat','wb') as wfp:
+with open(folderdate + '_' + shortname + '_dataframe.dat','wb') as wfp:
 	pickle.dump(df, wfp)
