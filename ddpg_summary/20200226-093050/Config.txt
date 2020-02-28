@@ -1,0 +1,9 @@
+NOISE_MAX_EP: 1000 
+map_name: Blank 
+prevent_PID: 0 
+save_frequency: 1000 
+LASER_BEAM: 40 
+save_velocity_bool: 0 
+load_replay_buffer_bool: 0 
+current_date_time: 20200226-093050 
+config_notes: This is the first training session in Blank world to get data on the average return over time. I want to explain that for blank world not much training is needed (since no obstacle) 
