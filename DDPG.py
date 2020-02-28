@@ -276,6 +276,18 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 switch_a_batch = np.asarray([e[5] for e in batch])
                 # y_i = np.asarray([e[1] for e in batch])
 
+                ######### Walter's Explanation #############
+                # There's actually a small problem with the way discounted return is calculated
+                # Here, only if buff.count > MINIBATCH_SIZE will GAMMA be used
+                    # whereas in theory we should always be adding discount to each past return
+                # So for k in range minibatch size
+                    # if t_batch[k] is true (t_batch is an array of 'terminal', if you look at buff.add
+                                            # you'll see that t_batch records whether it was terminal or not
+                    # so it looks through data points in t_batch to find a terminal one
+                        #and if it's terminal append r_batch (reward) to y_i
+                        #otherwise, append reward + discounted q-value to y_i
+
+                ##############################################
                 # Calculate targets
                 # critic
                 target_q = critic.predict_target(s2_batch, actor.predict_target(s2_batch))
