@@ -1,11 +1,9 @@
 NOISE_MAX_EP: 1000 
-map_name: Obstacles 
+map_name: Obstacles3 
 prevent_PID: 0 
 save_frequency: 1000 
 LASER_BEAM: 40 
 save_velocity_bool: 0 
 load_replay_buffer_bool: 1 
-current_date_time: 20200226-170933 
-config_notes: This is taking the blank model and training it for Obstacles.
-                    Important Point: If retraining, don't forget to stitch the tf summaries together
-                    So that the average return data starts at t=0 
+current_date_time: 20200227-220051 
+config_notes: Blank model, obstacles, and now the complex world training 
