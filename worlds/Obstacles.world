@@ -46,7 +46,7 @@ define floorplan model
 resolution 0.02
 
 interval_sim 100  # simulation timestep in milliseconds
-speedup 3
+speedup 4
 
 window
 ( 
