@@ -1,0 +1,9 @@
+NOISE_MAX_EP: 1000 
+map_name: Obstacles 
+prevent_PID: 0 
+save_frequency: 1000 
+LASER_BEAM: 40 
+save_velocity_bool: 0 
+load_replay_buffer_bool: 1 
+current_date_time: 20200229-000317 
+config_notes: Training model from scratch in Simple World (no prior training in blank world) 

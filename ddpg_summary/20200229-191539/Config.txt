@@ -1,0 +1,10 @@
+NOISE_MAX_EP: 1 
+map_name: Obstacles 
+prevent_PID: 0 
+save_frequency: 1000 
+LASER_BEAM: 40 
+save_velocity_bool: 0 
+load_replay_buffer_bool: 1 
+current_date_time: 20200229-191539 
+config_notes: There was a segmentation fault and training stopped at 13000 episodes.
+                I retrain and continue on using the saved replay buffer 
