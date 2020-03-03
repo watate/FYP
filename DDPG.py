@@ -23,8 +23,8 @@ import matplotlib.colors as colors
 # Maximum episodes run
 MAX_EPISODES = 50000
 # Episodes with noise
-#NOISE_MAX_EP = 1000
-NOISE_MAX_EP = 1
+NOISE_MAX_EP = 1000
+#NOISE_MAX_EP = 1
 # Noise parameters - Ornstein Uhlenbeck
 DELTA = 0.5 # The rate of change (time)
 SIGMA = 0.5 # Volatility of the stochastic processes
@@ -71,13 +71,12 @@ save_frequency = 1000
 prevent_PID = 0
 
 save_velocity_bool = 0 #don't forget to change save_frequency to save velocity
-load_replay_buffer_bool = 1
+load_replay_buffer_bool = 0
 velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 current_date_time = time.strftime("%Y%m%d-%H%M%S")
 
-config_notes = """There was a segmentation fault and training stopped at 13000 episodes.
-                I retrain and continue on using the saved replay buffer""" #Write stuff here to explain what training was for
+config_notes = """Training in simple world from scratch (again lmao, trying to hit 20k episodes)""" #Write stuff here to explain what training was for
 # ===========================
 #   Tensorflow Summary Ops
 # ===========================
