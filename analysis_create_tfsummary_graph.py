@@ -2,6 +2,9 @@
 #A lot of code here has been commented out
 	#uncomment the code if you would like to make different graphs (e.g. histograms)
 
+#Seaborn Documentation for relplot:
+	#https://seaborn.pydata.org/generated/seaborn.relplot.html#seaborn.relplot
+
 import pickle
 import os
 import matplotlib.pyplot as plt
@@ -11,8 +14,10 @@ import pandas as pd
 
 #filename = 
 #filename = "20200226-093050_3000b_dataframe.dat" #Blank World
-#filename = "20200226-170933_3000b16000s_dataframe.dat" #Simple World
-filename = "20200227-220051_3000b16000s30000c_dataframe.dat" #Complex World
+#filename = "20200226-170933_3000b16000s_dataframe.dat" #Simple World (after training in b)
+#filename = "20200227-220051_3000b16000s30000c_dataframe.dat" #Complex World (after training in b and s)
+#filename = "20200302-044536_24000s_dataframe.dat" #24000s
+filename = "20200301-074856_34000c_dataframe.dat" #34000c
 
 #prevent xlabel cutting off
 	#see: https://stackoverflow.com/questions/6774086/why-is-my-xlabel-cut-off-in-my-matplotlib-plot

@@ -1,4 +1,5 @@
 #This script generates graphs that compares trends from different training sessions
+#The graphs are generated in folder \compare
 
 import pickle
 import os
@@ -10,9 +11,9 @@ import pandas as pd
 ##############################################################################
 #Prepare and choose datasets from which to generate graphs
 
-filename1 = "20200226-093050_3000b_dataframe.dat" #Blank World
-filename2 = "20200226-170933_3000b16000s_dataframe.dat" #Simple World
-filename3 = "20200227-220051_3000b16000s30000c_dataframe.dat" #Complex World
+filename1 = "20200302-044536_24000s_dataframe.dat" #24000s
+filename2 = "20200301-074856_34000c_dataframe.dat" #34000c
+
 
 #prevent xlabel cutting off
 	#see: https://stackoverflow.com/questions/6774086/why-is-my-xlabel-cut-off-in-my-matplotlib-plot
@@ -30,9 +31,6 @@ if os.path.exists(filename1):
 if os.path.exists(filename2):
     with open(filename, 'rb') as rfp:
         df2 = pickle.load(rfp)
-if os.path.exists(filename3):
-    with open(filename, 'rb') as rfp:
-        df3 = pickle.load(rfp)
 
 ##############################################################################
 #Plot and produce initial raw data

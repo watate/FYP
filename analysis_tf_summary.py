@@ -19,12 +19,14 @@ steps = list()
 
 
 #folderdate = "20200226-093050" #Blank World
-#folderdate = "20200226-170933" #Simple World
-folderdate = "20200227-220051" #Complex World
-shortname = "3000b16000s30000c"
+#folderdate = "20200226-170933" #Simple World (after training in b)
+#folderdate = "20200227-220051" #Complex World (after training in s and b)
+#folderdate = "20200302-044536" #24000s
+folderdate = "20200301-074856" #34000c
+shortname = "34000c"
 
 #get data
-for e in tf.compat.v1.train.summary_iterator('ddpg_summary/' + folderdate + '/events.out.tfevents.1582869653.ubuntu'):
+for e in tf.compat.v1.train.summary_iterator('ddpg_summary/' + folderdate + '/events.out.tfevents.1583077738.ubuntu'):
 	for v in e.summary.value:
 		if v.tag == 'Reward':
 			reward.append(v.simple_value)
