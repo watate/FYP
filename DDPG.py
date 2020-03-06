@@ -9,6 +9,7 @@ import os
 
 from StageWorld import StageWorld
 from ReplayBuffer import ReplayBuffer
+from VAJBuffer import VAJBuffer
 from noise import Noise
 from reward import Reward
 from actor import ActorNetwork
@@ -54,10 +55,13 @@ ACTION = 2
 TARGET = 2
 SPEED = 2
 SWITCH = 2
+ACCEL = 2
+JERK = 2
 
 SUMMARY_DIR = './results/tf_ddpg'
 RANDOM_SEED = 1234
 BUFFER_SIZE = 20000
+VAJ_BUFFER_SIZE = 24
 MINIBATCH_SIZE = 32
 
 GAME = 'StageWorld'
@@ -116,6 +120,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
     critic.update_target_network()
 
     buff = ReplayBuffer(BUFFER_SIZE)    #Create replay buffer
+    VAJbuff = VAJBuffer(VAJ_BUFFER_SIZE) #create buffer for velocity, acceleration, and jerk
 
     # Check if replay buffer exists, reload it if it does
     if load_replay_buffer_bool == 1:
@@ -175,14 +180,54 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         ep_ave_max_q = 0
         ep_PID_count = 0.
         while not terminal and not rospy.is_shutdown():
-            s1 = env.GetLaserObservation()
+            s1 = env.GetLaserObservation() #s1 is current laser observation
             s_1 = np.append(np.reshape(s1, (LASER_BEAM, 1)), s_1[:, :(LASER_HIST - 1)], axis=1)
             s__1 = np.reshape(s_1, (LASER_BEAM * LASER_HIST)) 
             target1 = env.GetLocalTarget()
             speed1 = env.GetSelfSpeed()
+
+            ###################################################################################
+            #Generate new VAJ values
+            linear_vel = speed1[0]
+            angular_vel = speed1[1]
+            local_x = target1[0]
+            local_y = target1[1]
+            if len(VAJbuff) == 0: #if no previous data on velocity
+                linear_accel = linear_vel - 0 #because agent starts at zero velocity
+                angular_accel = angular_vel - 0
+                linear_jerk = 0
+                angular_jerk = 0
+            else:
+                motion = buff.pop() #take out most recent motion data
+                #previous_linear_vel = motion[0]
+                #previous_angular_vel = motion[1]
+                #previous_linear_accel = motion[2]
+                #previous_angular_accel = motion[3]
+                linear_accel = linear_vel - motion[0]
+                angular_accel = angular_vel - motion[1]
+                linear_jerk = linear_accel - motion[2]
+                angular_jerk = angular_accel - motion[3]
+                buff.append(motion) #put motion data back in
+            ###################################################################################
+            #Append to velocity list
             if save_velocity_bool == 1:
-                velocity_list.append((speed1[0], speed1[1])) #append velocities to list
-            state1 = np.concatenate([s__1, speed1, target1], axis=0)
+                velocity_list.append((speed1[0], speed1[1]))
+            ###################################################################################
+            #Add previous history to variables
+            #extend is like append but for multiple items
+            motion1 = buff.pop() #old
+            motion2 = buff.pop() #older
+            local_x.extend((motion1[6], motion2[6])) #local_x is item 6 from 0-7
+            local_y.extend((motion1[7], motion2[7])) #local_y is item 7
+            accel1 = (linear_accel, angular_accel) 
+            accel1.extend((motion1[2], motion1[3], motion2[2], motion2[3])) #linear accel is item 2, angular accel is item 3
+            jerk1 = (linear_jerk, angular_jerk) 
+            jerk1.extend((motion1[4], motion1[5], motion2[4], motion2[5])) #linear jerk is item 4, angular jerk is item 5
+            #put motion data back in
+            buff.append(motion2)
+            buff.append(motion1)
+            #state1 = np.concatenate([s__1, speed1, target1], axis=0) #add speed and target information to state
+            state1 = np.concatenate([s__1, speed1, accel1, jerk1, local_x, local_y], axis=0)
             [x, y, theta] =  env.GetSelfStateGT()
             map_img = env.RenderMap([[0, 0], env.target_point])
             
@@ -190,6 +235,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             ep_reward += r
             if j > 0 :
                 buff.add(state, a[0], r, state1, terminal, switch_a_t)      #Add replay buffer
+                VAJbuff.add(linear_vel, angular_vel, linear_accel, angular_accel, linear_jerk, angular_jerk, local_x, local_y) #Save VAJ values
             j += 1
             state = state1
 
@@ -414,7 +460,7 @@ def main(_):
         np.random.seed(RANDOM_SEED)
         tf.compat.v1.set_random_seed(RANDOM_SEED)
 
-        state_dim = LASER_BEAM * LASER_HIST + SPEED + TARGET
+        state_dim = LASER_BEAM * LASER_HIST + (SPEED + TARGET + ACCEL + JERK) * LASER_HIST
 
         action_dim = ACTION
         #action_bound = [0.25, np.pi/6] #bounded acceleration
