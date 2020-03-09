@@ -208,6 +208,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 linear_jerk = linear_accel - motion[2]
                 angular_jerk = angular_accel - motion[3]
                 buff.append(motion) #put motion data back in
+            env.UpdateAccelAndJerk([linear_accel, angular_accel], [linear_jerk, angular_jerk])
             ###################################################################################
             #Append to velocity list
             if save_velocity_bool == 1:
@@ -231,7 +232,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             [x, y, theta] =  env.GetSelfStateGT()
             map_img = env.RenderMap([[0, 0], env.target_point])
             
-            r, terminal, result = env.GetRewardAndTerminate(j)
+            r, terminal, result = env.GetRewardAndTerminate(j, jerk1)
             ep_reward += r
             if j > 0 :
                 buff.add(state, a[0], r, state1, terminal, switch_a_t)      #Add replay buffer
