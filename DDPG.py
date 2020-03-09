@@ -179,6 +179,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         ep_reward = 0
         ep_ave_max_q = 0
         ep_PID_count = 0.
+        ep_jerk_linear = 0
+        ep_jerk_angular = 0
         while not terminal and not rospy.is_shutdown():
             s1 = env.GetLaserObservation() #s1 is current laser observation
             s_1 = np.append(np.reshape(s1, (LASER_BEAM, 1)), s_1[:, :(LASER_HIST - 1)], axis=1)
@@ -234,6 +236,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             
             r, terminal, result = env.GetRewardAndTerminate(j, jerk1)
             ep_reward += r
+            ep_jerk_linear += linear_jerk
+            ep_jerk_angular += angular_jerk
             if j > 0 :
                 buff.add(state, a[0], r, state1, terminal, switch_a_t)      #Add replay buffer
                 VAJbuff.add(linear_vel, angular_vel, linear_accel, angular_accel, linear_jerk, angular_jerk, local_x, local_y) #Save VAJ values
@@ -390,6 +394,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         summary.value.add(tag='Distance', simple_value=float(target_distance))
         summary.value.add(tag='Result', simple_value=float(result))
         summary.value.add(tag='Steps', simple_value=float(j))
+        summary.value.add(tag='Total Linear Jerk', simple_value=float(ep_jerk_linear))
+        summary.value.add(tag='Total Angular Jerk', simple_value=float(ep_jerk_angular))
 
         summary_writer.add_summary(summary, T)
 
