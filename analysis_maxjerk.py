@@ -1,4 +1,5 @@
 #This script calculates the maximum jerk from a given velocity_list.dat file
+#Max jerk here refers to 
 
 import pickle
 import os
