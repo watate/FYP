@@ -80,7 +80,7 @@ velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 current_date_time = time.strftime("%Y%m%d-%H%M%S")
 
-config_notes = """Training in simple world from scratch (again lmao, trying to hit 20k episodes)""" #Write stuff here to explain what training was for
+config_notes = """New Reward Function Test: Training in Simple World""" #Write stuff here to explain what training was for
 # ===========================
 #   Tensorflow Summary Ops
 # ===========================
@@ -194,13 +194,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             angular_vel = speed1[1]
             local_x = target1[0]
             local_y = target1[1]
-            if len(VAJbuff) == 0: #if no previous data on velocity
-                linear_accel = linear_vel - 0 #because agent starts at zero velocity
-                angular_accel = angular_vel - 0
-                linear_jerk = 0
-                angular_jerk = 0
-            else:
-                motion = buff.pop() #take out most recent motion data
+            if j > 0:
+                motion = VAJbuff.pop1() #take out most recent motion data
                 #previous_linear_vel = motion[0]
                 #previous_angular_vel = motion[1]
                 #previous_linear_accel = motion[2]
@@ -209,7 +204,6 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 angular_accel = angular_vel - motion[1]
                 linear_jerk = linear_accel - motion[2]
                 angular_jerk = angular_accel - motion[3]
-                buff.append(motion) #put motion data back in
             env.UpdateAccelAndJerk([linear_accel, angular_accel], [linear_jerk, angular_jerk])
             ###################################################################################
             #Append to velocity list
@@ -218,17 +212,22 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             ###################################################################################
             #Add previous history to variables
             #extend is like append but for multiple items
-            motion1 = buff.pop() #old
-            motion2 = buff.pop() #older
-            local_x.extend((motion1[6], motion2[6])) #local_x is item 6 from 0-7
-            local_y.extend((motion1[7], motion2[7])) #local_y is item 7
-            accel1 = (linear_accel, angular_accel) 
-            accel1.extend((motion1[2], motion1[3], motion2[2], motion2[3])) #linear accel is item 2, angular accel is item 3
-            jerk1 = (linear_jerk, angular_jerk) 
-            jerk1.extend((motion1[4], motion1[5], motion2[4], motion2[5])) #linear jerk is item 4, angular jerk is item 5
-            #put motion data back in
-            buff.append(motion2)
-            buff.append(motion1)
+            if j < 2:
+                speed1.extend((, motion2[6])) #wt
+                local_x = (0, 0, 0, 0, 0, 0)
+                local_y = (0, 0, 0, 0, 0, 0)
+                accel1 = (0, 0, 0, 0, 0, 0)
+                jerk1 = (0, 0, 0, 0, 0, 0)
+            else:
+                motion1, motion2 = VAJbuff.pop2()
+                local_x.extend((motion1[6], motion2[6])) #local_x is item 6 from 0-7
+                local_y.extend((motion1[7], motion2[7])) #local_y is item 7
+                accel1 = (linear_accel, angular_accel) 
+                accel1.extend((motion1[2], motion1[3], motion2[2], motion2[3])) #linear accel is item 2, angular accel is item 3
+                jerk1 = (linear_jerk, angular_jerk) 
+                jerk1.extend((motion1[4], motion1[5], motion2[4], motion2[5])) #linear jerk is item 4, angular jerk is item 5
+            
+            ###################################################################################
             #state1 = np.concatenate([s__1, speed1, target1], axis=0) #add speed and target information to state
             state1 = np.concatenate([s__1, speed1, accel1, jerk1, local_x, local_y], axis=0)
             [x, y, theta] =  env.GetSelfStateGT()

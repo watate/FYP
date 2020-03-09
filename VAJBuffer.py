@@ -37,3 +37,15 @@ class VAJBuffer(object):
     def erase(self):
         self.buffer = deque()
         self.num_experiences = 0
+
+    def pop1(self):
+        motion1 = self.buffer.pop()
+        self.buffer.append(motion1)
+        return motion1
+
+    def pop2(self):
+        motion1 = self.buffer.pop()
+        motion2 = self.buffer.pop()
+        self.buffer.append(motion2)
+        self.buffer.append(motion1)
+        return motion1, motion2
