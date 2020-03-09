@@ -213,19 +213,18 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             #Add previous history to variables
             #extend is like append but for multiple items
             if j < 2:
-                speed1.extend((, motion2[6])) #wt
+                speed1 = (linear_vel, angular_vel, 0, 0, 0, 0) #wt
                 local_x = (0, 0, 0, 0, 0, 0)
                 local_y = (0, 0, 0, 0, 0, 0)
                 accel1 = (0, 0, 0, 0, 0, 0)
                 jerk1 = (0, 0, 0, 0, 0, 0)
             else:
                 motion1, motion2 = VAJbuff.pop2()
-                local_x.extend((motion1[6], motion2[6])) #local_x is item 6 from 0-7
-                local_y.extend((motion1[7], motion2[7])) #local_y is item 7
-                accel1 = (linear_accel, angular_accel) 
-                accel1.extend((motion1[2], motion1[3], motion2[2], motion2[3])) #linear accel is item 2, angular accel is item 3
-                jerk1 = (linear_jerk, angular_jerk) 
-                jerk1.extend((motion1[4], motion1[5], motion2[4], motion2[5])) #linear jerk is item 4, angular jerk is item 5
+                speed1 = (linear_vel, angular_vel, motion1[0], motion1[1], motion2[0], motion2[1])
+                accel1 = (linear_accel, angular_accel, motion1[2], motion1[3], motion2[2], motion2[3]) #linear accel is item 2, angular accel is item 3
+                jerk1 = (linear_jerk, angular_jerk, motion1[4], motion1[5], motion2[4], motion2[5]) #linear jerk is item 4, angular jerk is item 5
+                local_x = (local_x, motion1[6], motion2[6]) #local_x is item 6 from 0-7
+                local_y = (local_y, motion1[7], motion2[7]) #local_y is item 7
             
             ###################################################################################
             #state1 = np.concatenate([s__1, speed1, target1], axis=0) #add speed and target information to state
