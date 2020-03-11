@@ -66,8 +66,8 @@ MINIBATCH_SIZE = 32
 GAME = 'StageWorld'
 
 #map_name = 'Obstacles'
-map_name = 'Obstacles3'
-#map_name = 'Blank'
+#map_name = 'Obstacles3'
+map_name = 'Blank'
 map_type = './worlds/' + map_name + '.jpg'
 
 save_frequency = 1000
@@ -79,7 +79,7 @@ velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 current_date_time = time.strftime("%Y%m%d-%H%M%S")
 
-config_notes = """New Reward Function Test: Training in COMPLEX World
+config_notes = """New Reward Function Test: Training in BLANK World
 jerk_reward = ((jerk[0]/1)**2 + (jerk[1]/(4*np.pi/3)**2))/25""" #Write stuff here to explain what training was for
 # ===========================
 #   Tensorflow Summary Ops
