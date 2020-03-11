@@ -1,0 +1,10 @@
+NOISE_MAX_EP: 1000 
+map_name: Obstacles3 
+prevent_PID: 0 
+save_frequency: 1000 
+LASER_BEAM: 40 
+save_velocity_bool: 0 
+load_replay_buffer_bool: 0 
+current_date_time: 20200309-214742 
+config_notes: New Reward Function Test: Training in COMPLEX World
+jerk_reward = ((jerk[0]/1)**2 + (jerk[1]/(4*np.pi/3)**2))/25 
