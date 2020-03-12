@@ -15,8 +15,9 @@ import seaborn as sb
 import pandas as pd
 
 ##############################################################################
-#Prepare and choose datasets from which to generate graphs
-filenames = ["20200302-044536_24000s_dataframe.dat", "20200301-074856_34000c_dataframe.dat"] #ADD_HERE
+#Prepare and choose datasets from which to generate graphs #ADD_HERE
+filenames = ["20200302-044536_24000s_dataframe.dat", 
+"20200311-004451_VSmooth_Simple_dataframe.dat", "20200309-000445_Jerk_Simple_dataframe.dat"] #Simple Worlds
 
 #Loading the DataFrame generated from preprocess (analysis_tf_summary.py)
 #ADD_HERE
@@ -26,8 +27,11 @@ if os.path.exists(filenames[0]):
 if os.path.exists(filenames[1]):
 	with open(filenames[1], 'rb') as rfp:
 		df1 = pickle.load(rfp)
+if os.path.exists(filenames[2]):
+	with open(filenames[2], 'rb') as rfp:
+		df2 = pickle.load(rfp)
 
-df_list = [df0, df1] #ADD_HERE
+df_list = [df0, df1, df2] #ADD_HERE
 
 #Rename columns
 #https://stackoverflow.com/questions/11346283/renaming-columns-in-pandas
@@ -41,13 +45,14 @@ for df, i in zip(df_list, range(len(filenames))):
 df_qmax = df_list[0].filter(["time"], axis=1)
 df_qmax = df_qmax.assign(qmax0=df0["q_max0"].copy())
 df_qmax = df_qmax.assign(qmax1=df1["q_max1"].copy())
+df_qmax = df_qmax.assign(qmax2=df2["q_max2"].copy())
 
 #Rename columns again
-df_qmax.columns = ["Time", "Simple World", "Complex World"] #ADD_HERE
+df_qmax.columns = ["Time", "Normal Model", "Model with Velocity Smoother", "Model with Jerk-Learning"] #ADD_HERE
 
 #Drop rows that have NaN (i.e. follow the dataframe with the least number of rows)
 df_qmax = df_qmax.dropna().copy()
 
 ######################## DATA PREPROCESSING (PD.MELT) #########################
-with open('dataframes/qmax_simpleVScomplex.dat','wb') as wfp:
+with open('dataframes/qmax_3Models.dat','wb') as wfp:
 	pickle.dump(df_qmax, wfp)
