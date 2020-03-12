@@ -10,7 +10,7 @@ import pandas as pd
 
 ##############################################################################
 #Prepare and choose dataframe from which to generate graphs
-filepath = "dataframes/qmax_3Models.dat"
+filepath = "dataframes/average_performance_3models.dat"
 if os.path.exists(filepath):
     with open(filepath, 'rb') as rfp:
         df = pickle.load(rfp)
@@ -39,12 +39,14 @@ df = pd.melt(df, id_vars=["Time"])
 #Plot and save graph
 this = "Time"
 that = "value"
-name = "Qmax"
+name = "Average Performance"
+world = "Simple World"
 g = sb.lineplot(x=this, y=that, hue='variable', legend='full', data=df)
-plt.ylabel("Qmax Value")
-plt.title("{0} vs {1}".format(name, this))
+plt.ylabel("Value")
+plt.xlabel("Time (x10^2 episodes)") #for averaged results
+plt.title("{0} vs {1} ({2})".format(name, this, world))
 fig = g.get_figure()
-fig.savefig(save_dir + "paper_" + name + "_line" + ".png", dpi=fig_dpi)
+fig.savefig(save_dir + "paper_" + world + "_" + name + "_line" + ".png", dpi=fig_dpi)
 plt.cla()
 plt.clf()
 plt.close("all")
