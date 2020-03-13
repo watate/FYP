@@ -240,8 +240,8 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             
             r, terminal, result = env.GetRewardAndTerminate(j, jerk_stack)
             ep_reward += r
-            ep_jerk_linear += linear_jerk
-            ep_jerk_angular += angular_jerk
+            ep_jerk_linear += abs(linear_jerk)
+            ep_jerk_angular += abs(angular_jerk)
             if j > 0 :
                 buff.add(state, a[0], r, state1, terminal, switch_a_t)      #Add replay buffer
             j += 1
