@@ -10,7 +10,7 @@ import pandas as pd
 
 ##############################################################################
 #Prepare and choose dataframe from which to generate graphs
-filepath = "dataframes/average_performance_3models.dat"
+filepath = "dataframes/simple_success_rate_3models.dat"
 if os.path.exists(filepath):
     with open(filepath, 'rb') as rfp:
         df = pickle.load(rfp)
@@ -39,7 +39,7 @@ df = pd.melt(df, id_vars=["Time"])
 #Plot and save graph
 this = "Time"
 that = "value"
-name = "Average Performance"
+name = "Success Rate"
 world = "Simple World"
 g = sb.lineplot(x=this, y=that, hue='variable', legend='full', data=df)
 plt.ylabel("Value")

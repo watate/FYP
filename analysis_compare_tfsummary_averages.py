@@ -1,4 +1,4 @@
-#This script is like analysis_compare_tfsummary but it generates dataframe for averaged values
+#Now deprecated. Use the exponential moving average version
 
 import pickle
 import os

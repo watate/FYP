@@ -58,5 +58,5 @@ df_qmax.columns = ["Time", "Normal Model", "Model with Velocity Smoother", "Mode
 df_qmax = df_qmax.dropna().copy()
 
 ######################## DATA PREPROCESSING (PD.MELT) #########################
-with open('dataframes/success_rate_simple_3models.dat','wb') as wfp:
+with open('dataframes/simple_success_rate_3models.dat','wb') as wfp:
 	pickle.dump(df_qmax, wfp)
