@@ -64,8 +64,8 @@ MINIBATCH_SIZE = 32
 
 GAME = 'StageWorld'
 
-map_name = 'Obstacles'
-#map_name = 'Obstacles3'
+#map_name = 'Obstacles'
+map_name = 'Obstacles3'
 #map_name = 'Blank'
 map_type = './worlds/' + map_name + '.jpg'
 
@@ -78,7 +78,7 @@ velocity_list_filename = 'velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 current_date_time = time.strftime("%Y%m%d-%H%M%S")
 
-config_notes = """Model 2: Training in Simple World""" #Write stuff here to explain what training was for
+config_notes = """Model 2: Training in Complex World""" #Write stuff here to explain what training was for
 # ===========================
 #   Tensorflow Summary Ops
 # ===========================
