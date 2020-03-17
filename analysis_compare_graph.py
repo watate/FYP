@@ -1,3 +1,5 @@
+#Script 3: This script is used after analysis_compare_tfsummary.
+	#We generate graphs that compare the results of different trainings
 #This script generates graphs that compares trends from different training sessions
 #The graphs are generated in folder \compare
 
@@ -10,7 +12,7 @@ import pandas as pd
 
 ##############################################################################
 #Prepare and choose dataframe from which to generate graphs
-filepath = "dataframes/simple_success_rate_3models.dat"
+filepath = "dataframes/simple_success_rate_smooth_3models.dat"
 if os.path.exists(filepath):
     with open(filepath, 'rb') as rfp:
         df = pickle.load(rfp)
@@ -41,12 +43,13 @@ this = "Time"
 that = "value"
 name = "Success Rate"
 world = "Simple World"
+raw_or_smooth = "Smooth"
 g = sb.lineplot(x=this, y=that, hue='variable', legend='full', data=df)
 plt.ylabel("Value")
-plt.xlabel("Time (x10^2 episodes)") #for averaged results
-plt.title("{0} vs {1} ({2})".format(name, this, world))
+plt.xlabel("Time (episodes)") #for averaged results
+plt.title("{0} vs {1} ({2}) ({3})".format(name, this, world, raw_or_smooth))
 fig = g.get_figure()
-fig.savefig(save_dir + "paper_" + world + "_" + name + "_line" + ".png", dpi=fig_dpi)
+fig.savefig(save_dir + "paper_" + world + "_" + name + "_" + raw_or_smooth + "_line" + ".png", dpi=fig_dpi)
 plt.cla()
 plt.clf()
 plt.close("all")
