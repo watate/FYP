@@ -16,11 +16,11 @@ import pandas as pd
 
 ##############################################################################
 #Prepare and choose datasets from which to generate graphs #ADD_HERE
-#filenames = ["20200302-044536_24000s_dataframe.dat", 
-#"20200311-004451_VSmooth_Simple_dataframe.dat", "20200309-000445_Jerk_Simple_dataframe.dat"] #Simple Worlds
+filenames = ["20200302-044536_24000s_dataframe.dat", 
+"20200311-004451_VSmooth_Simple_dataframe.dat", "20200309-000445_Jerk_Simple_dataframe.dat"] #Simple Worlds
 
-filenames = ["Normal_Simple_average.dat", "VSmooth_Simple_average.dat", "Jerk_Simple_average.dat"] #Simple Averaged
-filenames = ["dataframe_averages/" + i for i in filenames]
+#filenames = ["Normal_Simple_average.dat", "VSmooth_Simple_average.dat", "Jerk_Simple_average.dat"] #Simple Averaged
+#filenames = ["dataframe_averages/" + i for i in filenames]
 
 #Loading the DataFrame generated from preprocess (analysis_tf_summary.py)
 #ADD_HERE
@@ -47,9 +47,9 @@ df_list = [df0, df1, df2] #ADD_HERE
 #ADD_HERE
 #df_qmax = df_list[0].filter(["time"], axis=1)
 df_qmax = df_list[0].filter(["Time"], axis=1) #For averaged dataframes
-df_qmax = df_qmax.assign(avp0=df0["Success Rate"].copy())
-df_qmax = df_qmax.assign(avp1=df1["Success Rate"].copy())
-df_qmax = df_qmax.assign(avp2=df2["Success Rate"].copy())
+df_qmax = df_qmax.assign(avp0=df0["reward"].copy())
+df_qmax = df_qmax.assign(avp1=df1["reward"].copy())
+df_qmax = df_qmax.assign(avp2=df2["reward"].copy())
 
 #Rename columns again
 df_qmax.columns = ["Time", "Normal Model", "Model with Velocity Smoother", "Model with Jerk-Learning"] #ADD_HERE
@@ -58,5 +58,5 @@ df_qmax.columns = ["Time", "Normal Model", "Model with Velocity Smoother", "Mode
 df_qmax = df_qmax.dropna().copy()
 
 ######################## DATA PREPROCESSING (PD.MELT) #########################
-with open('dataframes/simple_success_rate_3models.dat','wb') as wfp:
+with open('dataframes/simple_reward_3models.dat','wb') as wfp:
 	pickle.dump(df_qmax, wfp)

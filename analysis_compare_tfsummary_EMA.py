@@ -41,11 +41,11 @@ success_rate = [1 if i == 3 else 0 for i in result]
 
 data_temp = {"Placeholder": policy_usage}
 df_temp = pd.DataFrame(data_temp)
-policy_usage = df_temp["Placeholder"].ewm(span=100, adjust=True).mean()
+policy_usage = df_temp["Placeholder"].ewm(span=1000, adjust=True).mean()
 
 data_temp = {"Placeholder": success_rate}
 df_temp = pd.DataFrame(data_temp)
-success_rate = df_temp["Placeholder"].ewm(span=100, adjust=True).mean()
+success_rate = df_temp["Placeholder"].ewm(span=1000, adjust=True).mean()
 
 data = {"Time": np.arange(len(reward)),
 		"Reward": reward,
