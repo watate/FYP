@@ -139,6 +139,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
                 velocity_list = pickle.load(rfp)
 
 
+
     # plot settings
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -209,11 +210,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             accel1 = (linear_accel, angular_accel)
             jerk1 = (linear_jerk, angular_jerk)
             env.UpdateAccelAndJerk([linear_accel, angular_accel], [linear_jerk, angular_jerk])
-            ###################################################################################
-            #Append to velocity list
-            if save_velocity_bool == 1:
-                velocity_list.append((speed1[0], speed1[1]))
-            ###################################################################################
+        
             #Add previous history to variables
             #extend is like append but for multiple items
             if j >= 2:
@@ -313,6 +310,12 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
             #############################################
             env.Control(action)
 
+            ###################################################################################
+            #Append to velocity list
+            if save_velocity_bool == 1:
+                velocity_list.append((i, action[0], action[1])) #i is to record the index (which episode is this speed from?)
+            ###################################################################################
+
             #if save_velocity_bool == 1:
             #    velocity_list.append((action[0], action[1], ou_level)) #append velocities to list
 
@@ -402,6 +405,7 @@ def train(sess, env, actor, critic, noise, reward, discrete, action_bound):
         summary.value.add(tag='Steps', simple_value=float(j))
         summary.value.add(tag='Total Linear Jerk', simple_value=float(ep_jerk_linear))
         summary.value.add(tag='Total Angular Jerk', simple_value=float(ep_jerk_angular))
+        summary.value.add(tag='Episode', simple_value=float(i))
 
         summary_writer.add_summary(summary, T)
 
