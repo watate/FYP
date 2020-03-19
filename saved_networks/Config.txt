@@ -1,9 +1,9 @@
-NOISE_MAX_EP: 1000 
+NOISE_MAX_EP: 1 
 map_name: Obstacles 
-prevent_PID: 0 
-save_frequency: 1000 
+prevent_PID: 1 
+save_frequency: 500 
 LASER_BEAM: 40 
-save_velocity_bool: 0 
+save_velocity_bool: 1 
 load_replay_buffer_bool: 0 
-current_date_time: 20200302-044536 
-config_notes: Training in simple world from scratch (again lmao, trying to hit 20k episodes) 
+current_date_time: 20200319-060816 
+config_notes: Collecting velocity data for normal simple model 
