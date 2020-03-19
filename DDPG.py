@@ -23,8 +23,8 @@ import matplotlib.colors as colors
 # Maximum episodes run
 MAX_EPISODES = 50000
 # Episodes with noise
-NOISE_MAX_EP = 1000
-#NOISE_MAX_EP = 1
+#NOISE_MAX_EP = 1000
+NOISE_MAX_EP = 1
 # Noise parameters - Ornstein Uhlenbeck
 DELTA = 0.5 # The rate of change (time)
 SIGMA = 0.5 # Volatility of the stochastic processes
@@ -66,21 +66,20 @@ MINIBATCH_SIZE = 32
 GAME = 'StageWorld'
 
 #map_name = 'Obstacles'
-#map_name = 'Obstacles3'
-map_name = 'Blank'
+map_name = 'Obstacles3'
+#map_name = 'Blank'
 map_type = './worlds/' + map_name + '.jpg'
 
-save_frequency = 1000
-prevent_PID = 0
+save_frequency = 500
+prevent_PID = 1
 
-save_velocity_bool = 0 #don't forget to change save_frequency to save velocity
+save_velocity_bool = 1 #don't forget to change save_frequency to save velocity
 load_replay_buffer_bool = 0
-velocity_list_filename = 'velocity_list.dat'
+velocity_list_filename = 'jerk_complex_velocity_list.dat'
 replay_buffer_filename = 'replay_buffer.dat'
 current_date_time = time.strftime("%Y%m%d-%H%M%S")
 
-config_notes = """New Reward Function Test: Training in BLANK World
-jerk_reward = ((jerk[0]/1)**2 + (jerk[1]/(4*np.pi/3)**2))/25""" #Write stuff here to explain what training was for
+config_notes = """Collecting velocity data for Jerk Complex Model""" #Write stuff here to explain what training was for
 # ===========================
 #   Tensorflow Summary Ops
 # ===========================

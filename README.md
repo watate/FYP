@@ -46,6 +46,11 @@ python DDPG.py
 
 tensorboard --logdir [directory name]
 
+## Procedure for getting velocity data
+1. Rename the map_name, velocity list name, and config notes
+2. Replace saved_network with appropriate new network
+3. Run simulation
+
 ## Citation
 
 If you use this method in your research, please cite:
