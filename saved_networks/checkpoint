@@ -1,6 +1,0 @@
-model_checkpoint_path: "StageWorld-dqn-34000"
-all_model_checkpoint_paths: "StageWorld-dqn-30000"
-all_model_checkpoint_paths: "StageWorld-dqn-31000"
-all_model_checkpoint_paths: "StageWorld-dqn-32000"
-all_model_checkpoint_paths: "StageWorld-dqn-33000"
-all_model_checkpoint_paths: "StageWorld-dqn-34000"
