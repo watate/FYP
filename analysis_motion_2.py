@@ -6,7 +6,7 @@
 	#4. Creates jerk list
 	#5. Saves velocity data, acceleration data, and jerk data to the same dataframe
 
-import pickle
+import cPickle as pickle
 import os
 import matplotlib.pyplot as plt
 import numpy as np
