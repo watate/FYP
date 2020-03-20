@@ -1,25 +1,44 @@
-#Script 4: This script generates a multi-plot grid from 3 different dataframes
+#Script 4: This script generates a multi-plot grid from the dataframes generated from analysis_motion_3
 	#It does the following:
-	#1. Pickle in the dataframe with data from 3 models
+	#1. Pickle in the single dataframe with data from all 3 models
 	#2. Pandas.melt the datasets
 	#3. Generate multi-plot grid
 
-import cPickle as pickle
+import pickle
 import os
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb
 import pandas as pd
 
-filenames = ["complete_normal_simp.dat", "complete_vsmooth_sim.dat", "complete_jerk_simple.dat"]
-filenames = ["dataframe_motion/" + i for i in filenames]
+file = 'histogram_linear_jerk_simple_3models.dat'
+filepath = 'dataframes/' + file
 
-if os.path.exists(filenames[0]):
-	with open(filenames[0], 'rb') as rfp:
-		df0 = pickle.load(rfp)
-if os.path.exists(filenames[1]):
-	with open(filenames[1], 'rb') as rfp:
-		df1 = pickle.load(rfp)
-if os.path.exists(filenames[2]):
-	with open(filenames[2], 'rb') as rfp:
-		df2 = pickle.load(rfp)
+if os.path.exists(filepath):
+    with open(filepath, 'rb') as rfp:
+        df = pickle.load(rfp)
+
+############## INITIAL SETTINGS ##################
+#prevent xlabel cutting off
+	#see: https://stackoverflow.com/questions/6774086/why-is-my-xlabel-cut-off-in-my-matplotlib-plot
+from matplotlib import rcParams
+rcParams.update({'figure.autolayout': True})
+
+#Setting the style
+sb.set(style="darkgrid")
+
+
+############## PAPER ##################
+#Set Paper as format for graphs
+sb.set_context("paper") #other formats: "talk", "poster"
+
+#Set save directory and figure dpi
+save_dir = "pictures/paper/"
+fig_dpi = 300
+
+############## TIDY DATA ##################
+#Apply pandas melt
+df = pd.melt(df, id_vars=["Time"])
+
+############## PLOT HISTOGRAM ##################
+print(df)
