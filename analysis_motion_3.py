@@ -5,6 +5,7 @@
  	#3. Assign the 3 columns to a new dataframe
  	#4. Export the new dataframe to /dataframes
 
+import dill
 import pickle
 import os
 import matplotlib.pyplot as plt

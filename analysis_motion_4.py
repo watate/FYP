@@ -12,7 +12,7 @@ import numpy as np
 import seaborn as sns
 import pandas as pd
 
-file = 'histogram_linear_jerk_simple_3models.dat'
+file = 'histogram_angular_jerk_complex_3models.dat'
 filepath = 'dataframes/' + file
 
 if os.path.exists(filepath):
@@ -41,8 +41,8 @@ fig_dpi = 300
 df = pd.melt(df)
 
 ############## GRAPH SETTINGS ##################
-world = 'simple'
-name = 'Linear Jerk'
+world = 'complex'
+name = 'Angular Jerk'
 
 print(df)
 
@@ -50,4 +50,4 @@ print(df)
 g = sns.FacetGrid(df, col = "variable")
 g.map(plt.hist, "value")
 g.set_axis_labels(name, "Frequency")
-g.savefig(save_dir + "paper_" + world + "_" + name + "_line" + ".png", dpi=fig_dpi)
+g.savefig(save_dir + "paper_" + world + "_" + name + "_hist" + ".png", dpi=fig_dpi)
