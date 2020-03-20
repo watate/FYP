@@ -1,9 +1,10 @@
-NOISE_MAX_EP: 1 
+NOISE_MAX_EP: 1000 
 map_name: Obstacles 
-prevent_PID: 1 
-save_frequency: 500 
+prevent_PID: 0 
+save_frequency: 1000 
 LASER_BEAM: 40 
-save_velocity_bool: 1 
+save_velocity_bool: 0 
 load_replay_buffer_bool: 0 
-current_date_time: 20200319-060816 
-config_notes: Collecting velocity data for normal simple model 
+current_date_time: 20200309-000445 
+config_notes: New Reward Function Test: Training in Simple World
+jerk_reward = ((jerk[0]/1)**2 + (jerk[1]/(4*np.pi/3)**2))/25 
