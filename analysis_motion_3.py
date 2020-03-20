@@ -13,11 +13,11 @@ import numpy as np
 import seaborn as sb
 import pandas as pd
 
-#filenames = ["complete_normal_simp.dat", "complete_vsmooth_sim.dat", "complete_jerk_simple.dat"]
-filenames = ['complete_normal_comp.dat', 'complete_vsmooth_com.dat', 'complete_jerk_comple.dat']
+filenames = ["complete_normal_simp.dat", "complete_vsmooth_sim.dat", "complete_jerk_simple.dat"]
+#filenames = ['complete_normal_comp.dat', 'complete_vsmooth_com.dat', 'complete_jerk_comple.dat']
 filenames = ["dataframe_motion/" + i for i in filenames]
-variable = "angular_jerk"
-world = 'complex'
+variable = "linear_velocity"
+world = 'simple'
 
 if os.path.exists(filenames[0]):
 	with open(filenames[0], 'rb') as rfp:

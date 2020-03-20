@@ -1,4 +1,4 @@
-#Script 1: Grab velocity list data, process it into jerk
+#Script 1: Grab velocity list data, reformat it so it looks nice
 	#This is a preprocessing script. It does the following:
 	#1. Reorganizes the data into columns
 	#2. Labels the columns

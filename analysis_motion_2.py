@@ -20,7 +20,7 @@ import math
 #filename = 'jerk_complex_velocity_list.dat'
 #filename = 'normal_simple_velocity_list.dat'
 #filename = 'vsmooth_simple_velocity_list.dat'
-filename = 'jerk_simple_velocity_list.dat'
+#filename = 'jerk_simple_velocity_list.dat'
 
 filename1 = filename
 

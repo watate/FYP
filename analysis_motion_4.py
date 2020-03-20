@@ -12,7 +12,7 @@ import numpy as np
 import seaborn as sns
 import pandas as pd
 
-file = 'histogram_angular_jerk_complex_3models.dat'
+file = 'histogram_angular_velocity_complex_3models.dat'
 filepath = 'dataframes/' + file
 
 if os.path.exists(filepath):
@@ -42,7 +42,7 @@ df = pd.melt(df)
 
 ############## GRAPH SETTINGS ##################
 world = 'complex'
-name = 'Angular Jerk'
+name = 'Angular Velocity'
 
 print(df)
 
