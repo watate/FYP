@@ -64,5 +64,5 @@ angular_jerk = [df["angular_accel"][i+1] - df['angular_accel'][i]
 angular_jerk.insert(0, np.nan)
 df['angular_jerk'] = angular_jerk
 
-with open('dataframe_motion/' + 'complete_' + filename1[0:11],'wb') as wfp:
+with open('dataframe_motion/' + 'complete_' + filename1[0:11] + '.dat','wb') as wfp:
 	pickle.dump(df, wfp)
