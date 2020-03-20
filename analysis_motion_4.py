@@ -49,4 +49,5 @@ print(df)
 ############## PLOT HISTOGRAM ##################
 g = sns.FacetGrid(df, col = "variable")
 g.map(plt.hist, "value")
+g.set_axis_labels(name, "Frequency")
 g.savefig(save_dir + "paper_" + world + "_" + name + "_line" + ".png", dpi=fig_dpi)
