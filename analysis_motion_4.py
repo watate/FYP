@@ -4,7 +4,7 @@
 	#2. Pandas.melt the datasets
 	#3. Generate multi-plot grid
 
-import pickle
+import cPickle as pickle
 import os
 import matplotlib.pyplot as plt
 import numpy as np
