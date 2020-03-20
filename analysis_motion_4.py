@@ -5,10 +5,11 @@
 	#3. Generate multi-plot grid
 
 import pickle
+#import cPickle as pickle
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb
+import seaborn as sns
 import pandas as pd
 
 file = 'histogram_linear_jerk_simple_3models.dat'
@@ -25,20 +26,27 @@ from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 
 #Setting the style
-sb.set(style="darkgrid")
+sns.set(style="darkgrid")
 
 
 ############## PAPER ##################
 #Set Paper as format for graphs
-sb.set_context("paper") #other formats: "talk", "poster"
+sns.set_context("paper") #other formats: "talk", "poster"
 
 #Set save directory and figure dpi
 save_dir = "pictures/paper/"
 fig_dpi = 300
 
-############## TIDY DATA ##################
 #Apply pandas melt
-df = pd.melt(df, id_vars=["Time"])
+df = pd.melt(df)
+
+############## GRAPH SETTINGS ##################
+world = 'simple'
+name = 'Linear Jerk'
+
+print(df)
 
 ############## PLOT HISTOGRAM ##################
-print(df)
+g = sns.FacetGrid(df, col = "variable")
+g.map(plt.hist, "value")
+g.savefig(save_dir + "paper_" + world + "_" + name + "_line" + ".png", dpi=fig_dpi)
