@@ -5,16 +5,18 @@
  	#3. Assign the 3 columns to a new dataframe
  	#4. Export the new dataframe to /dataframes
 
-import pickle
+import cPickle as pickle
 import os
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb
 import pandas as pd
 
-filenames = ["complete_normal_simp.dat", "complete_vsmooth_sim.dat", "complete_jerk_simple.dat"]
+#filenames = ["complete_normal_simp.dat", "complete_vsmooth_sim.dat", "complete_jerk_simple.dat"]
+filenames = ['complete_normal_comp.dat', 'complete_vsmooth_com.dat', 'complete_jerk_comple.dat']
 filenames = ["dataframe_motion/" + i for i in filenames]
-variable = "linear_jerk"
+variable = "angular_jerk"
+world = 'complex'
 
 if os.path.exists(filenames[0]):
 	with open(filenames[0], 'rb') as rfp:
@@ -40,5 +42,5 @@ df_new.columns = ["Normal Model", "Model with Velocity Smoother", "Model with Je
 df_new = df_new.dropna().copy()
 
 ######################## DATA PREPROCESSING (PD.MELT) #########################
-with open('dataframes/' + variable + '_histogram_3models.dat','wb') as wfp:
+with open('dataframes/' 'histogram_' + variable + '_' + world + '_3models.dat','wb') as wfp:
 	pickle.dump(df_new, wfp)
