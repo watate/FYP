@@ -12,7 +12,7 @@ import pandas as pd
 
 ##############################################################################
 #Prepare and choose dataframe from which to generate graphs
-filepath = "dataframes/simple_success_rate_smooth_3models.dat"
+filepath = "dataframes/simple_reward_smooth_3models.dat"
 if os.path.exists(filepath):
     with open(filepath, 'rb') as rfp:
         df = pickle.load(rfp)
@@ -30,7 +30,7 @@ sb.set(style="darkgrid")
 sb.set_context("paper") #other formats: "talk", "poster"
 
 #Set save directory and figure dpi
-save_dir = "pictures/compare/"
+save_dir = "pictures/updates/"
 fig_dpi = 300
 
 ##############################################################################
@@ -40,14 +40,15 @@ df = pd.melt(df, id_vars=["Time"])
 ###################### PLOT Q_MAX ##############################
 #Plot and save graph
 this = "Time"
+xname = "Training Episodes"
 that = "value"
-name = "Success Rate"
+name = "Performance"
 world = "Simple World"
 raw_or_smooth = "Smooth"
 g = sb.lineplot(x=this, y=that, hue='variable', legend='full', data=df)
 plt.ylabel("Value")
-plt.xlabel("Time (episodes)") #for averaged results
-plt.title("{0} vs {1} ({2}) ({3})".format(name, this, world, raw_or_smooth))
+plt.xlabel(xname) #for averaged results
+plt.title("{0} vs {1} ({2}) ({3})".format(name, xname, world, raw_or_smooth))
 fig = g.get_figure()
 fig.savefig(save_dir + "paper_" + world + "_" + name + "_" + raw_or_smooth + "_line" + ".png", dpi=fig_dpi)
 plt.cla()
