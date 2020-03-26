@@ -12,7 +12,7 @@ import numpy as np
 import seaborn as sns
 import pandas as pd
 
-file = 'histogram_angular_velocity_complex_3models.dat'
+file = 'histogram_linear_velocity_simple_3models.dat'
 filepath = 'dataframes/' + file
 
 if os.path.exists(filepath):
@@ -34,20 +34,20 @@ sns.set(style="darkgrid")
 sns.set_context("paper") #other formats: "talk", "poster"
 
 #Set save directory and figure dpi
-save_dir = "pictures/paper/"
+save_dir = "pictures/updates/"
 fig_dpi = 300
 
 #Apply pandas melt
 df = pd.melt(df)
 
 ############## GRAPH SETTINGS ##################
-world = 'complex'
-name = 'Angular Velocity'
+world = 'simple'
+name = 'Linear Velocity'
 
-print(df)
+#print(df)
 
 ############## PLOT HISTOGRAM ##################
-g = sns.FacetGrid(df, col = "variable")
+g = sns.FacetGrid(df, col = "variable", sharex=True, sharey=True, xlim=(0,0.5))
 g.map(plt.hist, "value")
 g.set_axis_labels(name, "Frequency")
 g.savefig(save_dir + "paper_" + world + "_" + name + "_hist" + ".png", dpi=fig_dpi)
